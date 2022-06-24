@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  MyBucketName:
+    Type: String
+    Default: "peng-default"
+
+Resources:
+# book cover services
+  BookCover:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: book-cover/
+      Runtime: nodejs16.x
+      Handler: index.handler
+      Events:
+        UploadBookCover:
+          Type: S3
+          Properties:
+            Bucket: !Ref BookCoverBucket
+            Events: s3:ObjectCreated:*
+  BookCoverBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "1231-${MyBucketName}-3213"
+
+# Book service
+  BookTable:
+    Type: AWS::Serverless::SimpleTable
+  Books:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: book/
+      Handler: index.handler
+      Runtime: nodejs16.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BookTable
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        AddBook:
+          Type: Api
+          Properties:
+            Path: /books
+            Method: post
+        ListBooks:
+          Type: Api
+          Properties:
+            Path: /books
+            Method: get
+        Book:
+          Type: Api
+          Properties:
+            Path: /books/{id}
+            Method: any
+
+Globals:
+  Api:
+    Cors:
+      AllowOrigin: "'*'"
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
