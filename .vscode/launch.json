@@ -3,47 +3,47 @@
         {
             "type": "aws-sam",
             "request": "direct-invoke",
-            "name": "Upload Photo (nodejs16.x)",
+            "name": "Upload Book Cover (nodejs16.x)",
             "invokeTarget": {
                 "target": "template",
                 "templatePath": "${workspaceFolder}/backend/template.yaml",
-                "logicalId": "Photo"
+                "logicalId": "BookCover"
             },
             "lambda": {
                 "payload": {
                     "json": {
                         "Records": [
                             {
-                                "eventVersion": "2.0",
+                                "eventVersion": "2.1",
                                 "eventSource": "aws:s3",
-                                "awsRegion": "us-east-1",
-                                "eventTime": "1970-01-01T00:00:00.000Z",
+                                "awsRegion": "eu-central-1",
+                                "eventTime": "2022-06-24T11:05:38.544Z",
                                 "eventName": "ObjectCreated:Put",
                                 "userIdentity": {
-                                    "principalId": "EXAMPLE"
+                                    "principalId": "AWS:AIDAS4FQUVLDPI7EVRDKE"
                                 },
                                 "requestParameters": {
-                                    "sourceIPAddress": "127.0.0.1"
+                                    "sourceIPAddress": "83.135.76.19"
                                 },
                                 "responseElements": {
-                                    "x-amz-request-id": "EXAMPLE123456789",
-                                    "x-amz-id-2": "EXAMPLE123/5678abcdefghijklambdaisawesome/mnopqrstuvwxyzABCDEFGH"
+                                    "x-amz-request-id": "KMNE4E1TAQ0SBNQY",
+                                    "x-amz-id-2": "X5kJuEBFx9m5avlxBnbULhmuMNAa4NGfXJ2FPjDIwHuxL/9XeRmJZE/mYsr6wk10YoF8Vgr9vp0P6DJlk+NMzioK9aLpFjFs"
                                 },
                                 "s3": {
                                     "s3SchemaVersion": "1.0",
-                                    "configurationId": "testConfigRule",
+                                    "configurationId": "6263e19f-b925-4636-bcde-f3badfbad199",
                                     "bucket": {
-                                        "name": "example-bucket",
+                                        "name": "default-0000",
                                         "ownerIdentity": {
-                                            "principalId": "EXAMPLE"
+                                            "principalId": "AHCBVDOGTF86I"
                                         },
-                                        "arn": "arn:aws:s3:::example-bucket"
+                                        "arn": "arn:aws:s3:::default-0000"
                                     },
                                     "object": {
-                                        "key": "test/key",
-                                        "size": 1024,
-                                        "eTag": "0123456789abcdef0123456789abcdef",
-                                        "sequencer": "0A1B2C3D4E5F678901"
+                                        "key": "Campus+R_.jpg",
+                                        "size": 826212,
+                                        "eTag": "b61e2f8dc95a6363cb527db99152b9d1",
+                                        "sequencer": "0062B59A8273425703"
                                     }
                                 }
                             }

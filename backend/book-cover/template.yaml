@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  BookCoverBucketName:
+    Type: String
+    Default: "default"
+
+Resources:
+# book cover services
+  BookCover:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: book-cover/
+      Runtime: nodejs16.x
+      Handler: app.handler
+      Events:
+        UploadBookCover:
+          Type: S3
+          Properties:
+            Bucket: !Ref BookCoverBucket
+            Events: s3:ObjectCreated:*
+  BookCoverBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${BookCoverBucketName}-0000"

@@ -2,7 +2,7 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "peng-0002"
+stack_name = "peng"
 s3_bucket = "peng-data"
 s3_prefix = "peng"
 region = "eu-central-1"

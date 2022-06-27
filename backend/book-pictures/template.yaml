@@ -1,0 +1,127 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Prefix:
+    Type: String
+    Default: "peng"
+  BookPicturesBucketName:
+    Type: String
+    Default: "book-covers"
+
+Resources:
+# book cover services - to test get object event
+  BookPicturesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${Prefix}-${BookPicturesBucketName}-0000"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  BookPictures:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Runtime: nodejs16.x
+      Handler: app.handler
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref BookPicturesBucket
+        - Statement:
+          - Effect: Allow
+            Action: 's3-object-lambda:WriteGetObjectResponse'
+            Resource: '*'
+
+  # S3 Access Point (Network origin: Internet)
+  S3AccessPoint:
+    Type: 'AWS::S3::AccessPoint'
+    Properties:
+      Bucket: !Ref BookPicturesBucket
+      Name: 'resize-ap'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  S3ObjectLambdaAccessPoint:
+    Type: 'AWS::S3ObjectLambda::AccessPoint'
+    Properties: 
+      Name: 'resize'
+      ObjectLambdaConfiguration:
+        SupportingAccessPoint: !Sub 'arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${S3AccessPoint}'
+        TransformationConfigurations: 
+        - Actions: 
+            - GetObject
+          ContentTransformation: 
+            AwsLambda:
+              FunctionArn: !GetAtt BookPictures.Arn
+              FunctionPayload: 'test-payload'
+
+  S3ProxyApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: !Ref 'AWS::StackName'
+      BinaryMediaTypes: 
+        - '*/*'
+        # - image/png
+        # - image/jpg
+        # - image/gif
+        # - image/x-icon
+        # - application/octet-stream
+  
+  S3Proxy:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: ANY
+        IntegrationResponses:
+          - StatusCode: 200
+        Uri:  !Sub 'arn:aws:apigateway:${AWS::Region}:s3:${AWS::AccountId}:accesspoint/${S3ObjectLambdaAccessPoint}'
+        Credentials: !GetAtt AllowAccessRole.Arn
+      ResourceId: !GetAtt S3ProxyApi.RootResourceId
+      RestApiId: !Ref S3ProxyApi
+
+  # S3ObjectLambdaAccessPointPolicy:
+  #   Type: 'AWS::S3ObjectLambda::AccessPointPolicy'
+  #   Properties:
+  #     ObjectLambdaAccessPoint: !Ref S3ObjectLambdaAccessPoint
+  #     PolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Action: '*'
+  #           Effect: Allow
+  #           Resource:
+  #             - !GetAtt S3ObjectLambdaAccessPoint.Arn
+  #           Principal: '*'
+
+  AllowAccessRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "apigateway.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "AllowAccessPolicy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement:
+              - Action: '*'
+                Effect: Allow
+                Resource:
+                  - !GetAtt S3ObjectLambdaAccessPoint.Arn

@@ -1,45 +1,49 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-
 Parameters:
   Prefix:
     Type: String
-    Default: "peng"
+    Default: peng
   BookCoverBucketName:
     Type: String
-    Default: "book-covers"
-
+    Default: book-covers
 Resources:
-# book cover services - to test get object event
   BookCover:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: book-cover/
+      CodeUri: s3://peng-data/569d609c9571c4dd9753fec457f6a46f
       Runtime: nodejs16.x
       Handler: app.handler
       Events:
         UploadBookCover:
           Type: S3
           Properties:
-            Bucket: !Ref BookCoverBucket
+            Bucket:
+              Ref: BookCoverBucket
             Events: s3:ObjectCreated:*
+    Metadata:
+      SamResourceId: BookCover
   BookCoverBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${Prefix}-${BookCoverBucketName}-0000"
-
-# Book service
+      BucketName:
+        Fn::Sub: ${Prefix}-${BookCoverBucketName}-0000
+    Metadata:
+      SamResourceId: BookCoverBucket
   BookTable:
     Type: AWS::Serverless::SimpleTable
+    Metadata:
+      SamResourceId: BookTable
   Books:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: book/
+      CodeUri: s3://peng-data/5ee3c95f0ee9fdaf5a599ae0b36ba224
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
         Variables:
-          TABLE_NAME: !Ref BookTable
+          TABLE_NAME:
+            Ref: BookTable
       Policies: AmazonDynamoDBFullAccess
       Events:
         AddBook:
@@ -57,10 +61,11 @@ Resources:
           Properties:
             Path: /books/{id}
             Method: any
-
+    Metadata:
+      SamResourceId: Books
 Globals:
   Api:
     Cors:
-      AllowOrigin: "'*'"
-      AllowMethods: "'*'"
-      AllowHeaders: "'*'"
+      AllowOrigin: '''*'''
+      AllowMethods: '''*'''
+      AllowHeaders: '''*'''
