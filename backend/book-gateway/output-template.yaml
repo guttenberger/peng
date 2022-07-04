@@ -6,13 +6,13 @@ Parameters:
     Default: peng
   BookPicturesBucketName:
     Type: String
-    Default: book-covers
+    Default: book-s3
 Resources:
   BookPicturesBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName:
-        Fn::Sub: ${Prefix}-${BookPicturesBucketName}-0000
+        Fn::Sub: ${Prefix}-${BookPicturesBucketName}-0004
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -20,54 +20,6 @@ Resources:
         RestrictPublicBuckets: false
     Metadata:
       SamResourceId: BookPicturesBucket
-  BookPictures:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: s3://peng-data-0002/a6b77ee56595294caa7cef69e18b649b
-      Runtime: nodejs16.x
-      Handler: app.handler
-      Policies:
-      - S3CrudPolicy:
-          BucketName:
-            Ref: BookPicturesBucket
-      - Statement:
-        - Effect: Allow
-          Action: s3-object-lambda:WriteGetObjectResponse
-          Resource: '*'
-    Metadata:
-      SamResourceId: BookPictures
-  S3AccessPoint:
-    Type: AWS::S3::AccessPoint
-    Properties:
-      Bucket:
-        Ref: BookPicturesBucket
-      Name: resize-ap
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
-    Metadata:
-      SamResourceId: S3AccessPoint
-  S3ObjectLambdaAccessPoint:
-    Type: AWS::S3ObjectLambda::AccessPoint
-    Properties:
-      Name: resize
-      ObjectLambdaConfiguration:
-        SupportingAccessPoint:
-          Fn::Sub: arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${S3AccessPoint}
-        TransformationConfigurations:
-        - Actions:
-          - GetObject
-          ContentTransformation:
-            AwsLambda:
-              FunctionArn:
-                Fn::GetAtt:
-                - BookPictures
-                - Arn
-              FunctionPayload: test-payload
-    Metadata:
-      SamResourceId: S3ObjectLambdaAccessPoint
   S3ProxyApi:
     Type: AWS::ApiGateway::RestApi
     Properties:
@@ -88,7 +40,7 @@ Resources:
         IntegrationResponses:
         - StatusCode: 200
         Uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:s3:${AWS::AccountId}:accesspoint/${S3ObjectLambdaAccessPoint}
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:s3:path/${BookPicturesBucket}
         Credentials:
           Fn::GetAtt:
           - AllowAccessRole
@@ -123,7 +75,7 @@ Resources:
             Effect: Allow
             Resource:
             - Fn::GetAtt:
-              - S3ObjectLambdaAccessPoint
+              - BookPicturesBucket
               - Arn
     Metadata:
       SamResourceId: AllowAccessRole

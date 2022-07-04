@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  deploymentEnvironment:
+    Type: String
+    Default: test
+Resources:
+  MyAuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://peng-data-0005/9a3eccb5755341775065f2ccbcc19d79
+      Handler: app.handler
+      Runtime: nodejs16.x
+    Metadata:
+      SamResourceId: MyAuthFunction
+  MyAuthApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName:
+        Ref: deploymentEnvironment
+      Auth:
+        DefaultAuthorizer: MyLambdaRequestAuthorizer
+        Authorizers:
+          MyLambdaRequestAuthorizer:
+            FunctionArn:
+              Fn::GetAtt:
+              - MyAuthFunction
+              - Arn
+            FunctionInvokeRole:
+              Fn::GetAtt:
+              - MyAuthFunctionRole
+              - Arn
+            Identity:
+              ReauthorizeEvery: 0
+              QueryStrings:
+              - purpose
+            AuthorizerPayloadFormatVersion: 2.0
+            EnableSimpleResponses: true
+    Metadata:
+      SamResourceId: MyAuthApi
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://peng-data-0005/34bf402be49d7465390db15ff1cf7e03
+      Handler: app.handler
+      Runtime: nodejs16.x
+      Events:
+        GetRoot:
+          Type: HttpApi
+          Properties:
+            ApiId:
+              Ref: MyAuthApi
+            Path: /auth
+            Method: get
+            PayloadFormatVersion: '2.0'
+    Metadata:
+      SamResourceId: MyFunction
+Globals:
+  Api:
+    Cors:
+      AllowOrigin: '''*'''
+      AllowMethods: '''*'''
+      AllowHeaders: '''*'''
+Outputs:
+  HelloWorldApi:
+    Description: API Gateway endpoint URL for Hello World function
+    Value:
+      Fn::Sub: https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/auth?purpose=testabc

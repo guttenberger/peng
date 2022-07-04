@@ -1,0 +1,17 @@
+{
+  "name": "photo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "aws:package": "sam package --region eu-central-1 --s3-bucket peng-data-0005 --output-template-file output-template.yaml",
+    "aws:deploy": "sam deploy --stack-name peng-0005 --template-file output-template.yaml",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1161.0"
+  }
+}

@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  deploymentEnvironment:
+    Type: String
+    Default: "test"
+
+Resources:
+  MyAuthFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: auth-function/
+      Handler: app.handler
+      Runtime: nodejs16.x
+
+  MyAuthApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref deploymentEnvironment
+      Auth:
+        DefaultAuthorizer: MyLambdaRequestAuthorizer
+        Authorizers:
+          MyLambdaRequestAuthorizer:
+            # FunctionPayloadType: REQUEST
+            FunctionArn: !GetAtt MyAuthFunction.Arn
+            FunctionInvokeRole: !GetAtt MyAuthFunctionRole.Arn
+            Identity:
+              ReauthorizeEvery: 0
+              QueryStrings:
+                - purpose
+            AuthorizerPayloadFormatVersion: 2.0
+            EnableSimpleResponses: true
+
+  MyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: book-cover/
+      Handler: app.handler
+      Runtime: nodejs16.x
+      Events:
+        GetRoot:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MyAuthApi
+            Path: /auth
+            Method: get
+            PayloadFormatVersion: "2.0"
+
+Globals:
+  Api:
+    Cors:
+      AllowOrigin: "'*'"
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+
+Outputs:
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Hello World function"
+    Value: !Sub "https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/auth?purpose=testabc"

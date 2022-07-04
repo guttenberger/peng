@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  BookPicturesBucketName:
+    Type: String
+    Default: "book-s3"
+
+Resources:
+# book cover services - to test get object event
+  BookPicturesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::StackName}-${BookPicturesBucketName}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  S3ProxyApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: !Ref 'AWS::StackName'
+      BinaryMediaTypes: 
+        - '*/*'
+        # - image/png
+        # - image/jpg
+        # - image/gif
+        # - image/x-icon
+        # - application/octet-stream
+  
+  S3Proxy:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: ANY
+        IntegrationResponses:
+          - StatusCode: 200
+        Uri:  !Sub 'arn:aws:apigateway:${AWS::Region}:s3:path/${BookPicturesBucket}'
+        Credentials: !GetAtt AllowAccessRole.Arn
+      ResourceId: !GetAtt S3ProxyApi.RootResourceId
+      RestApiId: !Ref S3ProxyApi
+
+  AllowAccessRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "apigateway.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "AllowAccessPolicy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement:
+              - Action: '*'
+                Effect: Allow
+                Resource:
+                  - !GetAtt BookPicturesBucket.Arn
