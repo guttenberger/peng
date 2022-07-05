@@ -8,61 +8,117 @@ Resources:
   MyAuthFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-data-0005/9a3eccb5755341775065f2ccbcc19d79
+      CodeUri: s3://peng-data-0005/3ba11035573abf48a6b41d724f993399
       Handler: app.handler
       Runtime: nodejs16.x
     Metadata:
       SamResourceId: MyAuthFunction
   MyAuthApi:
-    Type: AWS::Serverless::HttpApi
+    Type: AWS::Serverless::Api
     Properties:
+      BinaryMediaTypes:
+      - image/png
+      - image/jpg
+      - image/gif
+      - image/x-icon
+      - application/octet-stream
       StageName:
         Ref: deploymentEnvironment
       Auth:
         DefaultAuthorizer: MyLambdaRequestAuthorizer
         Authorizers:
           MyLambdaRequestAuthorizer:
+            FunctionPayloadType: REQUEST
             FunctionArn:
               Fn::GetAtt:
               - MyAuthFunction
-              - Arn
-            FunctionInvokeRole:
-              Fn::GetAtt:
-              - MyAuthFunctionRole
               - Arn
             Identity:
               ReauthorizeEvery: 0
               QueryStrings:
               - purpose
-            AuthorizerPayloadFormatVersion: 2.0
-            EnableSimpleResponses: true
     Metadata:
       SamResourceId: MyAuthApi
   MyFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-data-0005/34bf402be49d7465390db15ff1cf7e03
+      CodeUri: s3://peng-data-0005/da1ea48a810fcd9f1d33bcefb62c45fc
       Handler: app.handler
       Runtime: nodejs16.x
+      Environment:
+        Variables:
+          BUCKET_NAME:
+            Ref: MyS3Bucket
+      Policies: AmazonS3FullAccess
       Events:
         GetRoot:
-          Type: HttpApi
+          Type: Api
           Properties:
-            ApiId:
+            RestApiId:
               Ref: MyAuthApi
-            Path: /auth
+            Path: /images
             Method: get
-            PayloadFormatVersion: '2.0'
     Metadata:
       SamResourceId: MyFunction
-Globals:
-  Api:
-    Cors:
-      AllowOrigin: '''*'''
-      AllowMethods: '''*'''
-      AllowHeaders: '''*'''
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: ${AWS::StackName}-images
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+    Metadata:
+      SamResourceId: MyS3Bucket
+  MyS3ObjectLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://peng-data-0005/d2100f991b803a8a15524e4e0520f136
+      Runtime: nodejs16.x
+      Handler: app.handler
+      Policies:
+      - S3CrudPolicy:
+          BucketName:
+            Ref: MyS3Bucket
+      - Statement:
+        - Effect: Allow
+          Action: s3-object-lambda:WriteGetObjectResponse
+          Resource: '*'
+    Metadata:
+      SamResourceId: MyS3ObjectLambda
+  MyS3AccessPoint:
+    Type: AWS::S3::AccessPoint
+    Properties:
+      Bucket:
+        Ref: MyS3Bucket
+      Name:
+        Fn::Sub: ${AWS::StackName}-support
+    Metadata:
+      SamResourceId: MyS3AccessPoint
+  MyS3ObjectLambdaAccessPoint:
+    Type: AWS::S3ObjectLambda::AccessPoint
+    Properties:
+      Name:
+        Fn::Sub: ${AWS::StackName}-anon
+      ObjectLambdaConfiguration:
+        SupportingAccessPoint:
+          Fn::Sub: arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${MyS3AccessPoint}
+        TransformationConfigurations:
+        - Actions:
+          - GetObject
+          ContentTransformation:
+            AwsLambda:
+              FunctionArn:
+                Fn::GetAtt:
+                - MyS3ObjectLambda
+                - Arn
+              FunctionPayload: test-payload
+    Metadata:
+      SamResourceId: MyS3ObjectLambdaAccessPoint
 Outputs:
   HelloWorldApi:
     Description: API Gateway endpoint URL for Hello World function
     Value:
-      Fn::Sub: https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/auth?purpose=testabc
+      Fn::Sub: https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/image?purpose=testabc

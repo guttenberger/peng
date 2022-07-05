@@ -23,7 +23,7 @@ Resources:
   BookPictures:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-data-0002/a6b77ee56595294caa7cef69e18b649b
+      CodeUri: s3://peng-data-0002/b91c975ea015dc25e3d30238ae01a0d0
       Runtime: nodejs16.x
       Handler: app.handler
       Policies:

@@ -7,6 +7,7 @@ Parameters:
     Default: "test"
 
 Resources:
+  #Custom auth filter
   MyAuthFunction:
     Type: AWS::Serverless::Function 
     Properties:
@@ -15,22 +16,25 @@ Resources:
       Runtime: nodejs16.x
 
   MyAuthApi:
-    Type: AWS::Serverless::HttpApi
+    Type: AWS::Serverless::Api
     Properties:
+      BinaryMediaTypes:
+        - image/png
+        - image/jpg
+        - image/gif
+        - image/x-icon
+        - application/octet-stream
       StageName: !Ref deploymentEnvironment
       Auth:
         DefaultAuthorizer: MyLambdaRequestAuthorizer
         Authorizers:
           MyLambdaRequestAuthorizer:
-            # FunctionPayloadType: REQUEST
+            FunctionPayloadType: REQUEST
             FunctionArn: !GetAtt MyAuthFunction.Arn
-            FunctionInvokeRole: !GetAtt MyAuthFunctionRole.Arn
             Identity:
               ReauthorizeEvery: 0
               QueryStrings:
                 - purpose
-            AuthorizerPayloadFormatVersion: 2.0
-            EnableSimpleResponses: true
 
   MyFunction:
     Type: AWS::Serverless::Function
@@ -38,23 +42,66 @@ Resources:
       CodeUri: book-cover/
       Handler: app.handler
       Runtime: nodejs16.x
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref MyS3Bucket
+      Policies: AmazonS3FullAccess
       Events:
         GetRoot:
-          Type: HttpApi
+          Type: Api
           Properties:
-            ApiId: !Ref MyAuthApi
-            Path: /auth
+            RestApiId: !Ref MyAuthApi
+            Path: /images
             Method: get
-            PayloadFormatVersion: "2.0"
 
-Globals:
-  Api:
-    Cors:
-      AllowOrigin: "'*'"
-      AllowMethods: "'*'"
-      AllowHeaders: "'*'"
+  # Bucket
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::StackName}-images"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  # Bucket Data Transform
+  MyS3ObjectLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: data-transformer/
+      Runtime: nodejs16.x
+      Handler: app.handler
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref MyS3Bucket
+        - Statement:
+          - Effect: Allow
+            Action: 's3-object-lambda:WriteGetObjectResponse'
+            Resource: '*'
+
+  # S3 Access Point (Network origin: Internet)
+  MyS3AccessPoint:
+    Type: 'AWS::S3::AccessPoint'
+    Properties:
+      Bucket: !Ref MyS3Bucket
+      Name: !Sub "${AWS::StackName}-support"
+
+  MyS3ObjectLambdaAccessPoint:
+    Type: 'AWS::S3ObjectLambda::AccessPoint'
+    Properties: 
+      Name:  !Sub "${AWS::StackName}-anon"
+      ObjectLambdaConfiguration:
+        SupportingAccessPoint: !Sub 'arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${MyS3AccessPoint}'
+        TransformationConfigurations: 
+        - Actions: 
+            - GetObject
+          ContentTransformation: 
+            AwsLambda:
+              FunctionArn: !GetAtt MyS3ObjectLambda.Arn
+              FunctionPayload: 'test-payload'
 
 Outputs:
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub "https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/auth?purpose=testabc"
+    Value: !Sub "https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/image?purpose=testabc"
