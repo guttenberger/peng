@@ -45,13 +45,16 @@ Resources:
       Environment:
         Variables:
           BUCKET_NAME: !Ref MyS3Bucket
-      Policies: AmazonS3FullAccess
+          S3_ACCESS_POINT: !GetAtt MyS3ObjectLambdaAccessPoint.Arn
+      Policies: 
+        - AmazonS3FullAccess
+        - AWSLambda_FullAccess
       Events:
         GetRoot:
           Type: Api
           Properties:
             RestApiId: !Ref MyAuthApi
-            Path: /images
+            Path: /images/{id}
             Method: get
 
   # Bucket
@@ -104,4 +107,4 @@ Resources:
 Outputs:
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub "https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/image?purpose=testabc"
+    Value: !Sub "https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/images?purpose=testabc"

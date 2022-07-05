@@ -42,21 +42,27 @@ Resources:
   MyFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-data-0005/da1ea48a810fcd9f1d33bcefb62c45fc
+      CodeUri: s3://peng-data-0005/28884f1f83a03c24ecf8469e3a08a33a
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
         Variables:
           BUCKET_NAME:
             Ref: MyS3Bucket
-      Policies: AmazonS3FullAccess
+          S3_ACCESS_POINT:
+            Fn::GetAtt:
+            - MyS3ObjectLambdaAccessPoint
+            - Arn
+      Policies:
+      - AmazonS3FullAccess
+      - AWSLambda_FullAccess
       Events:
         GetRoot:
           Type: Api
           Properties:
             RestApiId:
               Ref: MyAuthApi
-            Path: /images
+            Path: /images/{id}
             Method: get
     Metadata:
       SamResourceId: MyFunction
@@ -121,4 +127,4 @@ Outputs:
   HelloWorldApi:
     Description: API Gateway endpoint URL for Hello World function
     Value:
-      Fn::Sub: https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/image?purpose=testabc
+      Fn::Sub: https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/images?purpose=testabc
