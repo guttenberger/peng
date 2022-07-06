@@ -1,15 +1,14 @@
 {
-  "name": "photo",
+  "name": "privacy-component",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "all:install": "npm install --workspaces",
-    "aws:init": "aws s3 mb s3://peng-data-0005",
-    "aws:clean": "aws s3 rm s3://peng-data-0005 --recursive && aws s3 rm s3://peng-0005-images --recursive && sam delete --stack-name peng-0005",
-    "aws:package": "sam package --region eu-central-1 --s3-bucket peng-data-0005 --output-template-file output-template.yaml",
-    "aws:deploy": "sam deploy --stack-name peng-0005 --template-file output-template.yaml",
-    "aws:seed": "aws s3 cp ../../media s3://peng-0005-images/ --recursive",
+    "aws:init": "aws s3 mb s3://peng-runtime",
+    "aws:clean": "aws s3 rm s3://peng-runtime --recursive && aws s3 rm s3://peng-data --recursive && sam delete --stack-name peng",
+    "aws:package": "sam package --region eu-central-1 --s3-bucket peng-runtime --output-template-file output-template.yaml",
+    "aws:deploy": "sam deploy --stack-name peng --template-file output-template.yaml",
+    "aws:seed": "aws s3 cp ../media s3://peng-data/ --recursive",
     "aws:reset": "npm run aws:clean && npm run aws:package && npm run aws:deploy && npm run aws:seed"
   },
   "keywords": [],

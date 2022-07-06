@@ -2,9 +2,8 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "peng-004"
-s3_bucket = "peng-data"
-s3_prefix = "peng"
+stack_name = "peng"
+s3_bucket = "peng-runtime"
 region = "eu-central-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"

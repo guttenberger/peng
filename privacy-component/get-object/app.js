@@ -1,4 +1,5 @@
 const { S3 } = require("aws-sdk");
+// import {  } from "aws-sdk";
 
 const s3 = new S3();
 
@@ -14,11 +15,11 @@ exports.handler = async (event) => {
     Key: id // a key (literally a path to your file)
   }
 
-  console.log("S3Params-Event:\n", JSON.stringify({ params, path }, null, 2));
+  console.log("S3Params-Event:\n", JSON.stringify({ params }, null, 2));
   const result = await s3.getObject(params).promise();
 
   console.log(result);
 
   // Exit the Lambda function.
-  return { statusCode: 200 };
+  return result;
 };

@@ -5,15 +5,15 @@ Parameters:
     Type: String
     Default: test
 Resources:
-  MyAuthFunction:
+  Authenticator:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-data-0005/3ba11035573abf48a6b41d724f993399
+      CodeUri: s3://peng-runtime/87869a9d5587f6dc6c3b81c19a046f34
       Handler: app.handler
       Runtime: nodejs16.x
     Metadata:
-      SamResourceId: MyAuthFunction
-  MyAuthApi:
+      SamResourceId: Authenticator
+  AuthGateway:
     Type: AWS::Serverless::Api
     Properties:
       BinaryMediaTypes:
@@ -31,18 +31,18 @@ Resources:
             FunctionPayloadType: REQUEST
             FunctionArn:
               Fn::GetAtt:
-              - MyAuthFunction
+              - Authenticator
               - Arn
             Identity:
               ReauthorizeEvery: 0
               QueryStrings:
               - purpose
     Metadata:
-      SamResourceId: MyAuthApi
-  MyFunction:
+      SamResourceId: AuthGateway
+  GetObject:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-data-0005/28884f1f83a03c24ecf8469e3a08a33a
+      CodeUri: s3://peng-runtime/21a23750dd88519b2ca34fb7d3a9496c
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
@@ -61,16 +61,16 @@ Resources:
           Type: Api
           Properties:
             RestApiId:
-              Ref: MyAuthApi
-            Path: /images/{id}
+              Ref: AuthGateway
+            Path: /objects/{id}
             Method: get
     Metadata:
-      SamResourceId: MyFunction
+      SamResourceId: GetObject
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName:
-        Fn::Sub: ${AWS::StackName}-images
+        Fn::Sub: ${AWS::StackName}-data
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -81,7 +81,7 @@ Resources:
   MyS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-data-0005/d2100f991b803a8a15524e4e0520f136
+      CodeUri: s3://peng-runtime/d2100f991b803a8a15524e4e0520f136
       Runtime: nodejs16.x
       Handler: app.handler
       Policies:
@@ -127,4 +127,4 @@ Outputs:
   HelloWorldApi:
     Description: API Gateway endpoint URL for Hello World function
     Value:
-      Fn::Sub: https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/images?purpose=testabc
+      Fn::Sub: https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects?purpose=testabc

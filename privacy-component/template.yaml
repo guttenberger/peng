@@ -54,14 +54,14 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref AuthGateway
-            Path: /images/{id}
+            Path: /objects/{id}
             Method: get
 
   # Bucket
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${AWS::StackName}-images"
+      BucketName: !Sub "${AWS::StackName}-data"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -107,4 +107,4 @@ Resources:
 Outputs:
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub "https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/images?purpose=testabc"
+    Value: !Sub "https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/test.png?purpose=testabc"
