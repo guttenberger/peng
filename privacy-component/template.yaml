@@ -8,14 +8,14 @@ Parameters:
 
 Resources:
   #Custom auth filter
-  MyAuthFunction:
+  Authenticator:
     Type: AWS::Serverless::Function 
     Properties:
-      CodeUri: auth-function/
+      CodeUri: authenticator/
       Handler: app.handler
       Runtime: nodejs16.x
 
-  MyAuthApi:
+  AuthGateway:
     Type: AWS::Serverless::Api
     Properties:
       BinaryMediaTypes:
@@ -30,16 +30,16 @@ Resources:
         Authorizers:
           MyLambdaRequestAuthorizer:
             FunctionPayloadType: REQUEST
-            FunctionArn: !GetAtt MyAuthFunction.Arn
+            FunctionArn: !GetAtt Authenticator.Arn
             Identity:
               ReauthorizeEvery: 0
               QueryStrings:
                 - purpose
 
-  MyFunction:
+  GetObject:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: book-cover/
+      CodeUri: get-object/
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
@@ -53,7 +53,7 @@ Resources:
         GetRoot:
           Type: Api
           Properties:
-            RestApiId: !Ref MyAuthApi
+            RestApiId: !Ref AuthGateway
             Path: /images/{id}
             Method: get
 
@@ -72,7 +72,7 @@ Resources:
   MyS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: data-transformer/
+      CodeUri: anonymizer/
       Runtime: nodejs16.x
       Handler: app.handler
       Policies:
@@ -107,4 +107,4 @@ Resources:
 Outputs:
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub "https://${MyAuthApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/images?purpose=testabc"
+    Value: !Sub "https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/images?purpose=testabc"
