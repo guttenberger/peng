@@ -1,69 +1,74 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-
 Globals:
   Function:
     Runtime: nodejs16.x
     Timeout: 10
     MemorySize: 512
-
 Resources:
   PhotoBucket:
-    Type: 'AWS::S3::Bucket'
+    Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${AWS::StackName}-data"
+      BucketName:
+        Fn::Sub: ${AWS::StackName}-data
       BucketEncryption:
         ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-
+    Metadata:
+      SamResourceId: PhotoBucket
   MyS3Api:
-    Type: 'AWS::Serverless::Api'
+    Type: AWS::Serverless::Api
     Properties:
-      Name: !Sub "${AWS::StackName}-temp" 
+      Name:
+        Fn::Sub: ${AWS::StackName}-temp
       StageName: SSStage
       BinaryMediaTypes:
-        - '*/*'
-
+      - '*/*'
+    Metadata:
+      SamResourceId: MyS3Api
   RestApi:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: healthphotos/
+      CodeUri: s3://peng-proto-package/5c1c4f494d15241d069fd0226fa9797e
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
         Variables:
-          BUCKET_NAME: !Ref PhotoBucket
+          BUCKET_NAME:
+            Ref: PhotoBucket
       Policies: AmazonS3FullAccess
       Events:
         GetHealthphoto:
           Type: Api
           Properties:
-            RestApiId: !Ref MyS3Api
+            RestApiId:
+              Ref: MyS3Api
             Path: /healthphotos/{id}
             Method: any
         GetRoot:
           Type: Api
           Properties:
-            RestApiId: !Ref MyS3Api
+            RestApiId:
+              Ref: MyS3Api
             Path: /healthphotos/
             Method: get
         PostRoot:
           Type: Api
           Properties:
-            RestApiId: !Ref MyS3Api
+            RestApiId:
+              Ref: MyS3Api
             Path: /healthphotos/
             Method: post
-              # - get
-              # - put
-              # - delete
-
+    Metadata:
+      SamResourceId: RestApi
 Outputs:
   RestApiUrl:
-    Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Stage/healthphotos/test.png"
+    Description: API Gateway endpoint URL for Hello World function
+    Value:
+      Fn::Sub: https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Stage/healthphotos/test.png

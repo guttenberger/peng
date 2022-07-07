@@ -9,6 +9,7 @@
     "aws:package": "sam package --region eu-central-1 --s3-bucket peng-runtime --output-template-file output-template.yaml",
     "aws:deploy": "sam deploy --stack-name peng --template-file output-template.yaml",
     "aws:seed": "aws s3 cp ../media s3://peng-data/ --recursive",
+    "aws:logs": "sam logs -n GetObject --stack-name peng-runtime",
     "aws:reset": "npm run aws:clean && npm run aws:package && npm run aws:deploy && npm run aws:seed"
   },
   "keywords": [],
