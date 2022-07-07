@@ -16,52 +16,62 @@ const params = {
 //s3 object lambda access point ansprechen
 
 const csvFile = "C:/Users/U760165/Programming/Uni/pe-project/peng/client/pe-services/microservices/testdaten.csv"
-const modifiedCsvFile = "C:/Users/U760165/Programming/Uni/pe-project/peng/client/pe-services/microservices/testdaten_modified.csv"
+const arrayForHeaders = ["Nr.", "Postleitzahl", "Testzentrum", "Ergebnis"]
 
 const fs = require("fs");
 const fastCsv = require("fast-csv");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-const csv = require("csv-parser");
 
-const csvWriter = createCsvWriter({
-  path: modifiedCsvFile,
-  header: [
-    {id: "Nr.", title: "Nr."},
-    {id: "Postleitzahl", title: "Postleitzahl"},
-    {id: "Testzentrum", title: "Testzentrum"},
-    {id: "Ergebnis", title: "Testergebnis"},
-    // TODO: auslagern in config und von dort auslesen
-  ],
-  fieldDelimiter : ';'
-});
+keepCsvColumns(csvFile, arrayForHeaders)
 
-const options = {
-  objectMode: true,
-  delimiter: ";",
-  quote: null,
-  headers: true,
-  renameHeaders: false,
-};
+function keepCsvColumns (csvFile, headerArray) {
 
-const data = [];
-let modifiedCsvData = [];
+  const modifiedCsvFile = "C:/Users/U760165/Programming/Uni/pe-project/peng/client/pe-services/microservices/testdaten_modified.csv"
 
-// TODO: read in csv file from s3 Server
-fs.createReadStream(csvFile)
-  .pipe(fastCsv.parse(options))
-  .on("error", (error) => {
-    console.log(error);
-  })
-  .on("data", (row) => {
-    data.push(row);
-  })
-  .on("end", (rowCount) => {
-    console.log(rowCount);
-    console.log(data);
-    modifiedCsvData = data;
-    console.log(modifiedCsvData);
-
-    //write to file
-    //  TODO: offer this file as a download to the user
-    csvWriter.writeRecords(modifiedCsvData);
+  const csvWriter = createCsvWriter({
+    path: modifiedCsvFile,
+    header: headerArray.map(head => ({
+      id: head, title: head
+    })),
+    /*header: [
+      {id: "Nr.", title: "Nr."},
+      {id: "Postleitzahl", title: "Postleitzahl"},
+      {id: "Testzentrum", title: "Testzentrum"},
+      {id: "Ergebnis", title: "Testergebnis"},
+      // TODO: auslagern in config und von dort auslesen
+    ],*/
+    fieldDelimiter : ';'
   });
+
+  const options = {
+    objectMode: true,
+    delimiter: ";",
+    quote: null,
+    headers: true,
+    renameHeaders: false,
+  };
+
+  const data = [];
+  let modifiedCsvData = [];
+
+
+  fs.createReadStream(csvFile)
+    .pipe(fastCsv.parse(options))
+    .on("error", (error) => {
+      console.log(error);
+    })
+    .on("data", (row) => {
+      data.push(row);
+    })
+    .on("end", (rowCount) => {
+      console.log(rowCount);
+      console.log(data);
+      modifiedCsvData = data;
+      console.log(modifiedCsvData);
+
+      //write to file
+      //  TODO: offer this file as a download to the user
+      csvWriter.writeRecords(modifiedCsvData);
+
+    });
+}
