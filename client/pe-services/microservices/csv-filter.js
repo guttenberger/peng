@@ -15,8 +15,8 @@ const params = {
 //const csvFile = s3.getObject(params).createReadStream();
 //s3 object lambda access point ansprechen
 
-const csvFile = "C:/Users/U760165/Programming/Uni/privacy-engineering/peng-prototype/pe-web/pe-services/microservices/testdaten.csv"
-const modifiedCsvFile = "C:/Users/U760165/Programming/Uni/privacy-engineering/peng-prototype/pe-web/pe-services/microservices/testdaten_modified.csv"
+const csvFile = "C:/Users/U760165/Programming/Uni/pe-project/peng/client/pe-services/microservices/testdaten.csv"
+const modifiedCsvFile = "C:/Users/U760165/Programming/Uni/pe-project/peng/client/pe-services/microservices/testdaten_modified.csv"
 
 const fs = require("fs");
 const fastCsv = require("fast-csv");
