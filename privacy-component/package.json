@@ -14,13 +14,12 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-  },
-  "workspaces": [
-    "./*"
-  ],
   "engines": {
     "node": ">= 16.0.0",
     "npm": ">= 7.11.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1168.0",
+    "axios": "^0.27.2"
   }
 }

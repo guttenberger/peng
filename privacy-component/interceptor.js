@@ -1,10 +1,15 @@
-export function accessFilter(event, context) {
-    return {
-        isAllowed: true,
-        context: context
-    };
-}
+module.exports = {
+    accessFilter: async (event, context, accessToken = {}) => {
+        console.log("Filter-Event:\n", JSON.stringify({ event, context, accessToken }, null, 2));
 
-export function transform(event, context, object) {
-    return object;
+        return {
+            isAllowed: true,
+            context: context
+        };
+    },
+    transform: async (event, context, object) => {
+        console.log("Transform-Event:\n", JSON.stringify({ event, context, object }, null, 2));
+
+        return object;
+    },
 }

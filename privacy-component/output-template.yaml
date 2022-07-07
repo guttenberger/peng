@@ -4,13 +4,17 @@ Parameters:
   deploymentEnvironment:
     Type: String
     Default: test
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Timeout: 10
+    MemorySize: 512
 Resources:
   Authenticator:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/87869a9d5587f6dc6c3b81c19a046f34
-      Handler: app.handler
-      Runtime: nodejs16.x
+      CodeUri: s3://peng-runtime/8063ad911ba6ddd86a5c15c70413d964
+      Handler: authenticator.handler
     Metadata:
       SamResourceId: Authenticator
   AuthGateway:
@@ -36,15 +40,14 @@ Resources:
             Identity:
               ReauthorizeEvery: 0
               QueryStrings:
-              - purpose
+              - accessToken
     Metadata:
       SamResourceId: AuthGateway
   GetObject:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/21a23750dd88519b2ca34fb7d3a9496c
-      Handler: app.handler
-      Runtime: nodejs16.x
+      CodeUri: s3://peng-runtime/8063ad911ba6ddd86a5c15c70413d964
+      Handler: get-object.handler
       Environment:
         Variables:
           BUCKET_NAME:
@@ -81,9 +84,8 @@ Resources:
   MyS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/d2100f991b803a8a15524e4e0520f136
-      Runtime: nodejs16.x
-      Handler: app.handler
+      CodeUri: s3://peng-runtime/8063ad911ba6ddd86a5c15c70413d964
+      Handler: anonymizer.handler
       Policies:
       - S3CrudPolicy:
           BucketName:
@@ -127,4 +129,4 @@ Outputs:
   HelloWorldApi:
     Description: API Gateway endpoint URL for Hello World function
     Value:
-      Fn::Sub: https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects?purpose=testabc
+      Fn::Sub: https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/test.png?accessToken=testabc

@@ -6,26 +6,22 @@
 // the authorizer returns an HTTP 500 status code.
 // Note that token values are case-sensitive.
 
-// const { accessFilter } = require("../interceptor")
+const { accessFilter } = require("./interceptor");
 
 exports.handler = async (event, context) => {
   // Output the event details to CloudWatch Logs.
   console.log("Auth-Event:\n", JSON.stringify(event, null, 2));
 
-  const { purpose } = event.queryStringParameters;
+  const { accessToken } = event.queryStringParameters;
 
+  const { isAllowed, responseContext } = await accessFilter(event, context, accessToken);
 
-
-  const response = purpose === "testabc"
+  const response = isAllowed
     ? generatePolicy('user', 'Allow', event.methodArn)
     : generatePolicy('user', 'Deny', event.methodArn);
 
   // Optional output with custom properties of the String, Number or Boolean type.
-  response.context = {
-    "stringKey": "stringval",
-    "numberKey": 123,
-    "booleanKey": true
-  };
+  response.context = responseContext;
 
   console.log("Auth-Response:\n", JSON.stringify(response, null, 2));
 
@@ -50,13 +46,6 @@ const generatePolicy = (principalId, effect, resource) => {
     statementOne.Effect = effect;
     statementOne.Resource = resource;
     policyDocument.Statement[0] = statementOne;
-
-    // // todo be specific
-    // let statementTwo = {};
-    // statementTwo.Action = 's3:*'; 
-    // statementTwo.Effect = effect;
-    // statementTwo.Resource = "arn:aws:s3:::*";
-    // policyDocument.Statement[1] = statementTwo;
 
     authResponse.policyDocument = policyDocument;
   }

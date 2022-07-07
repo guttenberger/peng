@@ -6,14 +6,19 @@ Parameters:
     Type: String
     Default: "test"
 
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Timeout: 10
+    MemorySize: 512
+
 Resources:
   #Custom auth filter
   Authenticator:
     Type: AWS::Serverless::Function 
     Properties:
-      CodeUri: authenticator/
-      Handler: app.handler
-      Runtime: nodejs16.x
+      CodeUri: ./
+      Handler: authenticator.handler
 
   AuthGateway:
     Type: AWS::Serverless::Api
@@ -34,14 +39,13 @@ Resources:
             Identity:
               ReauthorizeEvery: 0
               QueryStrings:
-                - purpose
+                - accessToken
 
   GetObject:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: get-object/
-      Handler: app.handler
-      Runtime: nodejs16.x
+      CodeUri: ./
+      Handler: get-object.handler
       Environment:
         Variables:
           BUCKET_NAME: !Ref MyS3Bucket
@@ -72,9 +76,8 @@ Resources:
   MyS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: anonymizer/
-      Runtime: nodejs16.x
-      Handler: app.handler
+      CodeUri: ./
+      Handler: anonymizer.handler
       Policies:
         - S3CrudPolicy:
             BucketName: !Ref MyS3Bucket
@@ -107,4 +110,4 @@ Resources:
 Outputs:
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub "https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/test.png?purpose=testabc"
+    Value: !Sub "https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/test.png?accessToken=testabc"
