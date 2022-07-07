@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  PhotoBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  # S3BucketPolicy:
+  #   Type: 'AWS::S3::BucketPolicy'
+  #   Properties:
+  #     Bucket: !Ref PhotoBucket
+  #     PolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Action:
+  #             - "s3:GetObject"
+  #             - "s3:GetObjectVersion"
+  #           Effect: Allow
+  #           Resource:
+  #             - !GetAtt PhotoBucket.Arn
+  #             - !Sub
+  #                 - '${varPhotoBucketArn}/*'
+  #                 - varPhotoBucketArn: !GetAtt PhotoBucket.Arn
+  #           Principal:
+  #             AWS: '*'
+  #           Condition:
+  #             StringEquals:
+  #               's3:DataAccessPointAccount': !Sub ${AWS::AccountId}
+  #                   - Action:
+  #             - "s3:GetObject"
+  #             - "s3:GetObjectVersion"
+  #           Effect: Allow
+  #           Resource:
+  #             - !GetAtt PhotoBucket.Arn
+  #             - !Sub
+  #                 - '${varPhotoBucketArn}/*'
+  #                 - varPhotoBucketArn: !GetAtt PhotoBucket.Arn
+  #           Principal:
+  #             AWS: '*'
+  #           Condition:
+  #             StringEquals:
+  #               's3:DataAccessPointAccount': !Sub ${AWS::AccountId}
+
+
+  Books:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: book/
+      Handler: app.handler
+      Runtime: nodejs16.x
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref PhotoBucket
+      Policies: AmazonS3FullAccess
+      Events:
+        AddBook:
+          Type: Api
+          Properties:
+            Path: /books
+            Method: post
+        ListBooks:
+          Type: Api
+          Properties:
+            Path: /books
+            Method: get
+        Book:
+          Type: Api
+          Properties:
+            Path: /books/{id}
+            Method: any
+
+Outputs:
+  BucketUrl:
+    Description: "Bucket endpoint URL"
+    Value: !Sub "https://${PhotoBucket}.s3.eu-central-1.amazonaws.com/"
