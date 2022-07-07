@@ -1,0 +1,101 @@
+Nr.;Anrede;Titel;Vorname;Nachname;Geburtsdatum;Strasse;Hausnummer;Postleitzahl;Stadt;Mobil;EMail;Testzentrum;Ergebnis
+1;Herr;;Landolf;Laeth;;Kuhberg;12;55270;Bubenheim;0176/7518310;;Zentrum Prenzlberg;positiv
+2;Herr;;Adam;Kittel;;Malteserstrasse;23;71642;Ludwigsburg;0168/8509058;a_kittel@quickmail.none;Zentrum Prenzlberg;negativ
+3;Herr;;Siegert;Worch;17.09.1908;Hildebrandtstrasse;128;79189;Bad Krozingen;;siegert_worch@funmail.none;Zentrum Prenzlberg;negativ
+4;k.A.;;Friederike;Feller;;Fercher Strasse;59a;54675;Gentingen;0152/4010028;;Zentrum Prenzlberg;negativ
+5;Herr;;Wichard;Matthäus;;Am Koeppel;51;55595;Hargesheim;0168/7816247;wmatthaeus@email.none;Zentrum Prenzlberg;negativ
+6;Frau;;Mechthild;Diehm;;Tillystrasse;21;66871;Ehweiler;0158/4600411;m-diehm@net-mail.none;Zentrum Prenzlberg;positiv
+7;Herr;;Constantin;Klussmann;09.12.1911;Wissener Strasse;147;64401;Groß-Bieberau;0166/6993307;constantin-klussmann@ultramail.none;Zentrum Prenzlberg;negativ
+8;Herr;;Alois;Pollack;;Franz-Josef-Strasse;197;26465;Langeoog;0165/9982927;a.pollack@net-mail.none;Zentrum Prenzlberg;negativ
+9;Frau;;Amelie;Presser;;Am Schuetzenplatz;17;49080;Osnabrueck;0155/6061656;;Zentrum Prenzlberg;negativ
+10;Herr;;Theohold;Kunze;01.03.1959;Beethovenstrasse;156;26524;Laetetsburg;0172/8053254;t-kunze@ultramail.none;Zentrum Prenzlberg;negativ
+11;Frau;Dr.;Liebgunde;Rieg;;Waldbrueler Strasse;134;23847;Rethwisch;0179/1954828;liebgunde-rieg@hoster.none;Zentrum Prenzlberg;negativ
+12;Frau;;Julia;Ates;09.02.1921;Ludwigsallee;77;55483;Heinzenbach;0153/3325860;juliaates@web.none;Zentrum Prenzlberg;negativ
+13;Herr;;Gernulf;Wack;;Nordbahnstrasse;53;38557;Oslo;0171/4260089;gernulf_wack@private.none;Zentrum Prenzlberg;negativ
+14;Herr;;Willi;Guntermann;;Beikelort;79;54470;Graach an der Mosel;0169/8974601;willi-guntermann@goggle-mail.none;Zentrum Prenzlberg;negativ
+15;Herr;;Bernhardt;Graul;;Dachauer Strasse;13;77716;Fischerbach;0167/1865506;bernhardt-graul@spam-mail.none;Zentrum Prenzlberg;negativ
+16;Frau;;Sieglind;Stähler;21.04.1931;In der Grimmel;6;58730;Fruendenberg;;s.staehler@web.none;Zentrum Prenzlberg;negativ
+17;Herr;;Hubertus;Raethig;;Rudolf-Schneiders-Strasse;183;53520;Winnerath;0155/3620301;;Zentrum Prenzlberg;negativ
+18;Frau;;Roslinde;Obst;;Unter den Linden;183;41517;Grevenbroich;;roslinde79@xyz.none;Zentrum Prenzlberg;negativ
+19;Frau;;Renilde;Zach;;Mittelfeldstrasse;160;29225;Celle;0168/3091223;renilde.zach@validmail.none;Zentrum Prenzlberg;negativ
+20;Frau;;Elisabetha;Oltmanns;10.08.1996;Untere Grabenstrasse;199;66885;Bedesbach;;elisabetha_oltmanns@anymail.none;Zentrum Prenzlberg;negativ
+21;Frau;;Gretl;Mainka;;Hutteneichenweg;169;37412;Herzberg am Harz;0164/4032198;gretlmainka@spam-mail.none;Zentrum Prenzlberg;negativ
+22;Herr;;Hellmut;Lambert;14.07.1980;Droste-zu-Senden-Strasse;134;55595;Muenchwald;0168/8279124;h_80@goggle-mail.none;Zentrum Prenzlberg;negativ
+23;Herr;;Mohammed;Ringler;17.04.1948;Goerlitzer Strasse;172;66909;Steinbach am Glan;0170/4064276;m.ringler@ultramail.none;Zentrum Prenzlberg;negativ
+24;Frau;;Wilma;Raether;17.06.1961;Jesinghauser Strasse;32;64401;Gross-Bieberau;0173/6218141;wilmaroether@web.none;Zentrum Prenzlberg;positiv
+25;Frau;;Fridoline;Nikolai;30.08.1903;An der Bundesstrasse;149;56237;Deesen;0179/2568298;fridoline.nikolai@kitty.none;Virchow Klinikum;negativ
+26;Herr;;Friedwald;Suchanek;08.12.1959;Im Nordfelde;62;77704;Oberkirch;0152/8224611;f_suchanek@quickmail.none;Virchow Klinikum;negativ
+27;k.A.;;Armgard;Duerner;;Chemnitzer Strasse;38 b;66871;Thallichtenberg;0173/7063493;a_73@xyz.none;Virchow Klinikum;positiv
+28;Herr;;Wolrad;Exner;;Bornstube;198;56761;Hauroth;0167/2196761;wolrad-exner@inter-mail.none;Virchow Klinikum;negativ
+29;Herr;;Wolfgang;Dogan;;Hegebrockstrasse;82;83395;Freilassing;;wolfgang-dogan@web.none;Virchow Klinikum;negativ
+30;Herr;;Erhart;Haak;;Luebecker Weg;79;49757;Lahn;;;Virchow Klinikum;negativ
+31;Herr;;Eckhold;Petzold;;Johannisgarten;182;52499;Baesweiler;0155/6290853;e.petzold@company.none;Virchow Klinikum;negativ
+32;Herr;;Sonnhardt;Turek;;Dellegarten;149;31028;Gronau;0152/2557220;;Virchow Klinikum;negativ
+33;Herr;;Wendel;Sinz;;Kirchbergstrasse;129;52538;Selfkant;0167/8429321;;Virchow Klinikum;negativ
+34;Herr;;Gismar;Liebing;09.06.1963;Weihersbergstrasse;57;85457;Wuerth;0176/6227440;gismar-liebing@domain.none;Virchow Klinikum;negativ
+35;k.A.;;Gabriele;Weyrauch;27.01.1937;Haselstrasse;59;41748;Viersen;0178/4610953;g-weyrauch@justmail.none;Virchow Klinikum;negativ
+36;Herr;;Chris;Gilles;;In der Staar;197;54673;Koxhausen;0153/5239975;;Virchow Klinikum;negativ
+37;Frau;;Centa;Brendel;;Schiersteiner Strasse;176;25899;Klixbaell;;;Virchow Klinikum;negativ
+38;Frau;;Ingeborg;Suetterlin;;Gerbereiweg;39;38723;Seesen;0174/8751788;ingeborg_2020@goggle-mail.none;Virchow Klinikum;negativ
+39;Frau;;Jolante;Elling;07.09.1970;Bohnengasse;36;53520;Trierscheid;0156/6597240;;Virchow Klinikum;negativ
+40;Herr;;Treuhart;Schaeberl;;Gerh.-Hauptmann-Strasse;12;63225;Langen;0161/5522485;t_1921@justmail.none;Virchow Klinikum;negativ
+41;k.A.;;Marcel;Frenzel;01.03.1999;Grunewaldstrasse;177;82297;Steindorf;0174/8033597;marcel_frenzel@mymail.none;Artpraxis Dr. Best;negativ
+42;Herr;;Gunfried;Rasp;09.04.1918;Marie-Juchacz-Strasse;115;24848;Gross Rheide;0167/1349345;g-rasp@web.none;Artpraxis Dr. Best;negativ
+43;Frau;;Maike;Rittner;26.03.1935;Hospitalwaldstrasse;66;23746;Kellenhusen;0162/9199503;maike_rittner@web.none;Artpraxis Dr. Best;negativ
+44;Frau;;Jeannette;Mumm;;Helfensteinstrasse;163;49201;Dissen am Teutoburger Wald;0163/6190243;;Artpraxis Dr. Best;negativ
+45;Frau;;Regelinde;Stehling;;Uedemer Strasse;50;32130;Enger;0174/6855102;r_stehling@trashmail.none;Zentrum Kreuzberg;negativ
+46;k.A.;;Ehrhardt;Riehm;;Kirchhellener Strasse;166;49838;Wettrup;0166/6515447;ehrhardt.riehm@live-mail.none;Zentrum Kreuzberg;negativ
+47;Herr;;Dietger;Burchard;;Blumenrather Strasse;151;27729;Vollersode;;dietger-burchard@hoster.none;Zentrum Kreuzberg;negativ
+48;Herr;;Muhammed;Fessler;;Harrenscheid;8;31020;Salzhemmendorf;0173/9602772;muhammed_03@company.none;Zentrum Kreuzberg;negativ
+49;Frau;;Anke;Schimmel;;Humboldtstrasse;33;79365;Rheinhausen;;anke.schimmel@kitty.none;Zentrum Kreuzberg;negativ
+50;Herr;Dr.;Walter;Schmitz;;Wittumhofstrasse;125;75210;Keltern;0159/2925501;;Zentrum Kreuzberg;negativ
+51;k.A.;;Gerda;Tolksdorf;;Letter Strasse;65;76857;Dernbach;0168/8593284;gerdatolksdorf@goggle-mail.none;Zentrum Kreuzberg;positiv
+52;Herr;;Marlon;Schoch;;Auf der Winneburg;84;82205;Gilching;0169/8773637;marlon.schoch@funmail.none;Zentrum Kreuzberg;negativ
+53;Herr;;Reinholdt;Langheinrich;22.09.1922;Nauheimer Strasse;175;54340;Longuich;0150/3063357;r-langheinrich@spam-mail.none;Zentrum Kreuzberg;negativ
+54;Herr;;Alphonsus;Weaver;;Zur Unterhue;158;45527;Hattingen an der Ruhr;;alphonsus-20@justmail.none;Zentrum Kreuzberg;positiv
+55;Frau;Dr.;Ingelies;Zenger;;Hollerweg;20;57572;Harbach;0170/6668432;izenger@domain.none;Zentrum Kreuzberg;negativ
+56;Herr;Dr.;Raik;Schelling;;Lange Heide;146;75335;Dobel;0178/5272582;raik1913@private.none;Zentrum Kreuzberg;negativ
+57;Frau;;Christsolde;Ruecker;28.12.1920;Allerstrasse;183;57271;Hilchenbach;0168/9019411;c.ruecker@trashmail.none;Zentrum Kreuzberg;negativ
+58;Herr;;Heinzjoerg;Franck;;Hildesheimer Strasse;136;73054;Eislingen;0154/9697802;heinzjoerg.franck@xyz.none;Zentrum Kreuzberg;negativ
+59;Herr;;Damian;Droll;;Suedweg;108;39108;Magdeburg;0171/9288370;d-droll@trashmail.none;Zentrum Kreuzberg;negativ
+60;Herr;;Rico;Deinert;;Birkenfelder Strasse;172;72461;Albstadt;0169/4628578;;Zentrum Kreuzberg;negativ
+61;k.A.;;Uta;Schwarzfischer;;Braunschweig;8;21379;Scharnebeck;0164/1460363;utaschwarzfischer@funmail.none;Zentrum Kreuzberg;negativ
+62;Frau;;Milli;Heber;;Schmitter Weg;34;56341;Filsen;0170/4818655;m-10@quickmail.none;Zentrum Kreuzberg;negativ
+63;Herr;;Theofried;Muellmann;;Gymnicher Hauptstrasse;35;73249;Wernau;;theofried_83@ultramail.none;Zentrum Kreuzberg;negativ
+64;k.A.;;Meinold;Hauser;;Altenhofer Strasse;47;57635;Hirz-Maulsbach;0164/9090201;meinoldhauser@private.none;Zentrum Kreuzberg;negativ
+65;Herr;;Christophorus;Hustedt;;Grendel;74;25551;Lohbarbek;0152/9753486;christophorus.hustedt@web.none;Zentrum Kreuzberg;negativ
+66;Frau;;Maria;Badura;;Saynische Strasse;97;25584;Besdorf;0170/2758308;maria.badura@hoster.none;Zentrum Kreuzberg;negativ
+67;Frau;;Gretchen;Meding;;Gustavstrasse;166;76597;Loffenau;0165/7011752;gretchen73@trashmail.none;Zentrum Kreuzberg;negativ
+68;Herr;Dr.;Hansl;Tappert;;Neufelder Weg;186;85293;Reichertshausen;0171/8612201;h_1929@mymail.none;Zentrum Kreuzberg;negativ
+69;Herr;;Willmar;Schnelle;;Tuffsteinstrasse;109;67806;Katzenbach;0165/5405307;willmar.17@company.none;Zentrum Kreuzberg;negativ
+70;Frau;;Dorothee;Oltmanns;;Adendorfer Strasse;62;66989;Hoehfrueschen;0159/3510186;dorothee-oltmanns@live-mail.none;Zentrum Kreuzberg;negativ
+71;Herr;;Marlon;Klie;25.08.1946;Andernacher Weg;84;56826;Wollmerath;0179/3975366;marlonklie@trashmail.none;Zentrum Kreuzberg;negativ
+72;Frau;;Heideline;Kohrt;;Panoramastrasse;30;27570;Bremerhaven;0166/7624989;heideline-kohrt@live-mail.none;Zentrum Kreuzberg;negativ
+73;Frau;;Konstanze;Rockstroh;;Westender Weg;134;65558;Cramberg;0165/1928984;konstanzerockstroh@live-mail.none;Zentrum Kreuzberg;negativ
+74;Herr;;Mika;Durchstechen;;Franz-Schubert-Strasse;47;57589;Niederirsen;;mika1995@email.none;Zentrum Kreuzberg;positiv
+75;Herr;;Loisl;Stender;;Von-Bodelschwingh-Strasse;100;25551;Hohenlockstedt;0171/6031106;loisl.stender@net-mail.none;Zentrum Kreuzberg;positiv
+76;Frau;;Hannelene;Morton;;Fällstrasse;37;63936;Schneeberg;;h.morton@bestmail.none;Zentrum Kreuzberg;negativ
+77;Frau;;Agathe;Liebelt;;Kissbergstrasse;36a;46147;Oberhausen;;agathe-liebelt@net-mail.none;Zentrum Kreuzberg;negativ
+78;Frau;;Resilotte;Dahlhaus;02.09.1967;Zum Nuberg;145;63517;Rodenbach;0170/1357150;resilotte-dahlhaus@validmail.none;Zentrum Kreuzberg;negativ
+79;Frau;;Edwina;Surmann;;Karl-Boehm-Strasse;159;74360;Ilsfeld;0165/7135602;e87@open-mail.none;Ostbahnhof Apotheke;negativ
+80;Herr;;Friedhart;Kasimir;;Am Laach;53;84326;Rimbach;0177/9555698;f95@xyz.none;Ostbahnhof Apotheke;negativ
+81;Herr;;Werner;Wust;28.08.1910;Wohnpark am Weiher;171;72768;Reutlingen;0170/8962590;;Ostbahnhof Apotheke;positiv
+82;k.A.;;Hansdieter;Graap;;Steinbrink;86;56656;Brohl-Laetzing;0159/3026920;hansdieter_1921@spam-mail.none;Ostbahnhof Apotheke;negativ
+83;Frau;;Annekatrin;Alkan;;Scheidter Strasse;166 b;53506;Ahrbrueck;0172/7411085;a-alkan@xyz.none;Ostbahnhof Apotheke;negativ
+84;Frau;;Reglind;Doerfel;;Doerpfeldstrasse;153;77746;Schutterwald;0161/9821583;r_doerfel@bestmail.none;Ostbahnhof Apotheke;negativ
+85;Frau;;Kristiane;Adam;14.01.1993;Lennestrasse;24;56321;Rhens;0173/8051058;k-93@ultramail.none;Ostbahnhof Apotheke;negativ
+86;Herr;;Frithjof;Schwanitz;;Kurt-Schumacher-Platz;131;66127;Saarbrudcken;0166/1758226;frithjofschwanitz@spam-mail.none;Ostbahnhof Apotheke;negativ
+87;Frau;;Helgrid;Leonhard;11.01.1996;Bodener Strasse;7;87671;Ronsberg;0178/4117995;helgridleonhard@open-mail.none;Ostbahnhof Apotheke;positiv
+88;Herr;Dr.;Ottmar;Nikolic;;Am Brunnenbach;170;97340;Martinsheim;0165/8298474;ottmar-nikolic@email.none;Ostbahnhof Apotheke;negativ
+89;k.A.;;Tobias;Gaecke;16.05.1932;Hinterm Koeppel;81;23883;Sterley;0170/9663298;tgoecke@quickmail.none;Ostbahnhof Apotheke;negativ
+90;Herr;;Gerhard;Schaefer;;Rauscherstrasse;144;23881;Alt Moelln;0157/1260084;gerhard-schaefer@kitty.none;Ostbahnhof Apotheke;negativ
+91;Frau;;Annelies;Buchner;11.01.1926;Wittensteinstrasse;173;48167;Muenster;;anneliesbuchner@xyz.none;Ostbahnhof Apotheke;negativ
+92;Herr;;Eckhart;Malone;27.01.2000;Im Gruendchen;48;86568;Hollenbach;0160/7972324;eckhart_00@goggle-mail.none;Ostbahnhof Apotheke;negativ
+93;Herr;;Heinolf;Meng;;Im Kirchenstoeck;8;76133;Karlsruhe;0175/2433825;h_1922@web.none;Ostbahnhof Apotheke;negativ
+94;Herr;;Hardo;Goerlach;;Walther-Rathenau-Strasse;163;66620;Nonnweiler;0160/2728859;hardo.goerlach@hoster.none;Ostbahnhof Apotheke;negativ
+95;Herr;;Wido;Anger;;Lortzingstrasse;77;56357;Straeth;0178/7212340;wido.1956@retromail.none;Ostbahnhof Apotheke;positiv
+96;Frau;;Korinna;Schrey;;St.-Michael-Strasse;18;54552;Katzwinkel;;korinna.2004@goggle-mail.none;Ostbahnhof Apotheke;negativ
+97;Frau;;Nora;Strobl;;Weg zur Laad;72;13585;Spandau;;n_strobl@web.none;Ostbahnhof Apotheke;negativ
+98;Frau;Dr.;Lona;Bilger;07.08.1939;Gritschstrasse;189;57539;Selbach;0151/3788082;lona1939@validmail.none;Ostbahnhof Apotheke;positiv
+99;Herr;;Folkhardt;Meissner;;Hospitalstrasse;148;26909;Neulehe;0151/3257580;folkhardt.moessner@validmail.none;Ostbahnhof Apotheke;negativ
+100;Herr;;Sigolf;Hagemeier;;Fuerstenberger Strasse;117;49767;Twist;0165/2282426;sigolfhagemeier@open-mail.none;Ostbahnhof Apotheke;negativ
