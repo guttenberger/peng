@@ -6,6 +6,7 @@ exports.handler = async (event, context) => {
     console.log("Healthphotos-Event:\n", JSON.stringify(event, null, 2));
 
     const id = event.pathParameters?.id;
+    const { filename } = event.queryStringParameters;
 
     if (!id && event.httpMethod === "GET") {
         const result = await s3.listObjectsV2({ Bucket: process.env.BUCKET_NAME }).promise();
@@ -14,10 +15,13 @@ exports.handler = async (event, context) => {
     }
 
     if (!id && event.httpMethod === "POST") {
+        if (!filename) {
+            throw Error();
+        }
         // const file = event.isBase64Encoded ? Buffer.from(event.body, 'base64') : event.body;
         await s3.putObject({
             Bucket: process.env.BUCKET_NAME, // a path to your Bucket
-            Key: `${new Date().toISOString()}-test.png`, // a key (literally a path to your file)
+            Key: filename, // a key (literally a path to your file)
             Body: event.isBase64Encoded ? Buffer.from(event.body, 'base64') : event.body,
             ContentType: event.headers["Content-Type"]
         }).promise();
