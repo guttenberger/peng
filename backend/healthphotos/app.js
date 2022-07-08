@@ -6,7 +6,6 @@ exports.handler = async (event, context) => {
     console.log("Healthphotos-Event:\n", JSON.stringify(event, null, 2));
 
     const id = event.pathParameters?.id;
-    const { filename } = event.queryStringParameters;
 
     if (!id && event.httpMethod === "GET") {
         const result = await s3.listObjectsV2({ Bucket: process.env.BUCKET_NAME }).promise();
@@ -15,8 +14,16 @@ exports.handler = async (event, context) => {
     }
 
     if (!id && event.httpMethod === "POST") {
+        const filename = event.queryStringParameters?.filename;
+
         if (!filename) {
-            throw Error();
+            const message = 'No filename in query parameter provided';
+            const type = 'FilenameMissing';
+
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: message, type, requestId: event.requestId })
+            };
         }
         // const file = event.isBase64Encoded ? Buffer.from(event.body, 'base64') : event.body;
         await s3.putObject({
@@ -38,12 +45,10 @@ exports.handler = async (event, context) => {
             case "DELETE":
                 return await deleteObject(event, context);
             default:
+                const message = `Unsupported HTTP method ${event.httpMethod}`;
                 return {
                     statusCode: 405,
-                    body: JSON.stringify({
-                        errorType: "MethodNotAllowed",
-                        message: "Method Not Allowed"
-                    })
+                    body: JSON.stringify({ error: message })
                 };
         }
     }

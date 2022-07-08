@@ -6,8 +6,19 @@ Globals:
     Runtime: nodejs16.x
     Timeout: 10
     MemorySize: 512
+  
 
 Resources:
+  # General Api Gateway
+  MyS3Api:
+    Type: 'AWS::Serverless::Api'
+    Properties:
+      Name: !Sub "${AWS::StackName}-temp" 
+      StageName: Test
+      BinaryMediaTypes:
+        - '*/*'
+
+  # Photo service
   PhotoBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
@@ -21,14 +32,6 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-
-  MyS3Api:
-    Type: 'AWS::Serverless::Api'
-    Properties:
-      Name: !Sub "${AWS::StackName}-temp" 
-      StageName: SSStage
-      BinaryMediaTypes:
-        - '*/*'
 
   RestApi:
     Type: AWS::Serverless::Function
@@ -59,11 +62,46 @@ Resources:
             RestApiId: !Ref MyS3Api
             Path: /healthphotos/
             Method: post
-              # - get
-              # - put
-              # - delete
+
+  # Patient service
+  PatientTable:
+    Type: AWS::Serverless::SimpleTable
+
+  Patient:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: patient/
+      Handler: app.handler
+      Runtime: nodejs16.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref PatientTable
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        AddPatient:
+          Type: Api
+          Properties:
+            Path: /patients
+            Method: post
+            RestApiId: !Ref MyS3Api
+        ListPatient:
+          Type: Api
+          Properties:
+            Path: /patients
+            Method: get
+            RestApiId: !Ref MyS3Api
+        Patient:
+          Type: Api
+          Properties:
+            Path: /patients/{id}
+            Method: any
+            RestApiId: !Ref MyS3Api
+
 
 Outputs:
-  RestApiUrl:
-    Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Stage/healthphotos/test.png"
+  HealthPhotoRestApiUrl:
+    Description: "Severless REST api for health photos"
+    Value: !Sub  "https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/healthphotos/"
+  PatientRestApiUrl:
+    Description: "Severless REST api for patient data"
+    Value: !Sub  "https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/patients/"
