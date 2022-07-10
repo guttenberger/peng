@@ -10,18 +10,16 @@ const { accessFilter } = require("./interceptor");
 
 exports.handler = async (event, context) => {
   // Output the event details to CloudWatch Logs.
-  console.log("Auth-Event:\n", JSON.stringify(event, null, 2));
+  console.log("Auth-Event:\n", JSON.stringify({ event, context }, null, 2));
 
-  const { accessToken } = event.queryStringParameters;
-
-  const { isAllowed, responseContext } = await accessFilter(event, context, accessToken);
-
-  const response = isAllowed
+  const response = true
     ? generatePolicy('user', 'Allow', event.methodArn)
     : generatePolicy('user', 'Deny', event.methodArn);
 
   // Optional output with custom properties of the String, Number or Boolean type.
-  response.context = responseContext;
+  response.context = {
+    test: "test"
+  };
 
   console.log("Auth-Response:\n", JSON.stringify(response, null, 2));
 

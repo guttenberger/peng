@@ -1,0 +1,55 @@
+[
+    {
+        "purpose": "CancerResearch",
+        "purposeToken": "Y9xxdhfKbh9zRHiv4w9ywmqdhAiVgGg6",
+        "transform": {
+            "transform-operation": "csv-filter",
+            "fields": [
+                {
+                    "Postleitzahl": "remove-last-two-numbers"
+                },
+                {
+                    "Geburtsdatum": "year-only"
+                },
+                "Testzentrum",
+                "Ergebnis"
+            ]
+        }
+    },
+    {
+        "purpose": "Statistics",
+        "purposeToken": "vNTJqJM90WyAz4gk2vVcVaSNTzIRoStF",
+        "transform": {
+            "transform-operation": "csv-filter",
+            "fields": [
+                "Nr",
+                "Postleitzahl",
+                "Testzentrum",
+                "Ergebnis"
+            ]
+        }
+    },
+    {
+        "purpose": "MinistryOfHealth",
+        "purposeToken": "ZDuhmEuaP5EIQ2BZMKMIlxeloXGhnvI2",
+        "transform": {
+            "transform-operation": "csv-filter",
+            "fields": [
+                "Nr",
+                "Anrede",
+                "Titel",
+                "Vorname",
+                "Nachname",
+                "Geburtsdatum",
+                "Strasse",
+                "Hausnummer",
+                "Postleitzahl",
+                "Stadt",
+                "Mobil",
+                "EMail",
+                "Testzentrum",
+                "Ergebnis"
+            ]
+        }
+    }
+]

@@ -5,7 +5,26 @@ Globals:
     Runtime: nodejs16.x
     Timeout: 10
     MemorySize: 512
+  Api:
+    Cors:
+      AllowOrigin: '''*'''
+      AllowMethods: '''*'''
+      AllowHeaders: '''*'''
 Resources:
+  MyS3Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name:
+        Fn::Sub: ${AWS::StackName}-temp
+      StageName: Test
+      Cors:
+        AllowOrigin: '''*'''
+        AllowMethods: '''*'''
+        AllowHeaders: '''*'''
+      BinaryMediaTypes:
+      - '*/*'
+    Metadata:
+      SamResourceId: MyS3Api
   PhotoBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -22,16 +41,6 @@ Resources:
         RestrictPublicBuckets: true
     Metadata:
       SamResourceId: PhotoBucket
-  MyS3Api:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name:
-        Fn::Sub: ${AWS::StackName}-temp
-      StageName: Test
-      BinaryMediaTypes:
-      - '*/*'
-    Metadata:
-      SamResourceId: MyS3Api
   RestApi:
     Type: AWS::Serverless::Function
     Properties:
@@ -74,7 +83,7 @@ Resources:
   Patient:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-proto-package/4d6d878600370a7fdc9f7a8f2a2ca029
+      CodeUri: s3://peng-proto-package/41420e69a4414f16b7ac309b5a0b7a4a
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
@@ -106,6 +115,57 @@ Resources:
               Ref: MyS3Api
     Metadata:
       SamResourceId: Patient
+  CsvBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: ${AWS::StackName}-csv-archive
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+    Metadata:
+      SamResourceId: CsvBucket
+  CsvApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://peng-proto-package/37a376b741004296dfda2ebf94083724
+      Handler: app.handler
+      Runtime: nodejs16.x
+      Environment:
+        Variables:
+          BUCKET_NAME:
+            Ref: CsvBucket
+      Policies: AmazonS3FullAccess
+      Events:
+        GetCsvItem:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: MyS3Api
+            Path: /csv-archive/{id}
+            Method: any
+        GetCsvRoot:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: MyS3Api
+            Path: /csv-archive/
+            Method: get
+        PostCsvRoot:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: MyS3Api
+            Path: /csv-archive/
+            Method: post
+    Metadata:
+      SamResourceId: CsvApi
 Outputs:
   HealthPhotoRestApiUrl:
     Description: Severless REST api for health photos
@@ -114,4 +174,4 @@ Outputs:
   PatientRestApiUrl:
     Description: Severless REST api for patient data
     Value:
-      Fn::Sub: https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/patients/
+      Fn::Sub: https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/csv-archive/

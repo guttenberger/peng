@@ -1,59 +1,49 @@
 const { S3 } = require("aws-sdk");
-const axios = require("axios").default;
-const https = require("https");
 
-const { transform } = require("./interceptor");
+const { transform, accessFilter } = require("./interceptor");
 
 const s3 = new S3();
-
-async function httpPromise(urlOptions, data) {
-  return new Promise((resolve, reject) => {
-    const req = https.request(urlOptions, res => {
-      let body = '';
-
-      res.on('data', chunk => body += chunk.toString())
-      res.on('error', reject)
-      res.on('end', () => {
-        const { statusCode, headers } = res
-        const validResponse = statusCode >= 200 && statusCode <= 299
-
-        if (validResponse) resolve({ statusCode, headers, body })
-        else reject(new Error(`Request failed. status: ${statusCode}, body: ${body}`))
-      })
-    })
-
-    req.on('error', reject)
-    req.write(data, 'binary')
-    req.end()
-  });
-}
 
 exports.handler = async (event) => {
   // Output the event details to CloudWatch Logs.
   console.log("Datatransform-Event:\n", JSON.stringify(event, null, 2));
 
-  // Retrieve the operation context object from the event.
-  // This contains the info for the WriteGetObjectResponse request.
-  // Includes a presigned URL in `inputS3Url` to download the requested object.
   const { getObjectContext } = event;
-  const { outputRoute, outputToken, inputS3Url } = getObjectContext;
+  const { outputRoute, outputToken } = getObjectContext;
 
-  // Get image stored in S3 accessible via the presigned URL `inputS3Url`.
-  // const { data } = await httpPromise(inputS3Url);
-  const { data } = await axios.get(inputS3Url, { responseType: "arraybuffer" });
+  const [route, purposeToken] = event.userRequest.url.split(encodeURIComponent("#"));
 
-  await transform(data);
-  // // Resize the image
-  // // Height is optional, will automatically maintain aspect ratio.
-  // // withMetadata retains the EXIF data which preserves the orientation of the image.
-  // // const resized = await sharp(data).resize({ width: 100, height: 100 }).withMetadata();
+  const { isAllowed, responseContext } = accessFilter(event, {}, purposeToken);
+  console.log({ isAllowed, responseContext });
 
-  // Send the resized image back to S3 Object Lambda.
+  if (!isAllowed) {
+    await s3.writeGetObjectResponse({
+      StatusCode: 403,
+      ErrorCode: 'NotAuthorized',
+      ErrorMessage: 'Not Authorized'
+    }).promise();
+
+    return { 'status_code': 403 }
+  }
+
+  const supporting_access_point_arn = event["configuration"]["supportingAccessPointArn"];
+  const s3key = route.split(`${event.userRequest.headers.Host}/`).pop();
+
+  const { ContentType, Body, ContentLength } = await s3.getObject({
+    Bucket: supporting_access_point_arn,
+    Key: s3key
+  }).promise();
+
+  const modifiedObject = await transform(event, responseContext, Body);
+
   const params = {
     RequestRoute: outputRoute,
     RequestToken: outputToken,
-    Body: data,
+    ContentType,
+    Body: modifiedObject
   };
+
+  console.log(params);
 
   await s3.writeGetObjectResponse(params).promise();
 

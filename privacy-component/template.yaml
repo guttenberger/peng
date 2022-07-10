@@ -9,8 +9,13 @@ Parameters:
 Globals:
   Function:
     Runtime: nodejs16.x
-    Timeout: 10
-    MemorySize: 512
+    Timeout: 300
+    MemorySize: 1024
+  Api:
+    Cors:
+      AllowOrigin: "'*'"
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
 
 Resources:
   #Custom auth filter
@@ -24,11 +29,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       BinaryMediaTypes:
-        - image/png
-        - image/jpg
-        - image/gif
-        - image/x-icon
-        - application/octet-stream
+        - '*/*'
       StageName: !Ref deploymentEnvironment
       Auth:
         DefaultAuthorizer: MyLambdaRequestAuthorizer
@@ -39,17 +40,20 @@ Resources:
             Identity:
               ReauthorizeEvery: 0
               QueryStrings:
-                - accessToken
+                - purposeToken
 
   GetObject:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./
-      Handler: get-object.handler
+      Runtime: python3.8
+      # Handler: get-object.handler
+      Handler: get-object.lambda_handler
       Environment:
         Variables:
           BUCKET_NAME: !Ref MyS3Bucket
           S3_ACCESS_POINT: !GetAtt MyS3ObjectLambdaAccessPoint.Arn
+          HTTPS_S3_ACCESS_POINT: !Sub https://${MyS3ObjectLambdaAccessPoint}-${AWS::AccountId}.s3-object-lambda.${AWS::Region}.amazonaws.com
       Policies: 
         - AmazonS3FullAccess
         - AWSLambda_FullAccess
@@ -79,12 +83,13 @@ Resources:
       CodeUri: ./
       Handler: anonymizer.handler
       Policies:
-        - S3CrudPolicy:
-            BucketName: !Ref MyS3Bucket
-        - Statement:
-          - Effect: Allow
-            Action: 's3-object-lambda:WriteGetObjectResponse'
-            Resource: '*'
+        - AmazonS3FullAccess
+        # - S3CrudPolicy:
+        #     BucketName: !Ref MyS3Bucket
+        # - Statement:
+        #   - Effect: Allow
+        #     Action: 's3-object-lambda:WriteGetObjectResponse'
+        #     Resource: '*'
 
   # S3 Access Point (Network origin: Internet)
   MyS3AccessPoint:
@@ -105,9 +110,12 @@ Resources:
           ContentTransformation: 
             AwsLambda:
               FunctionArn: !GetAtt MyS3ObjectLambda.Arn
-              FunctionPayload: 'test-payload'
+              # FunctionPayload: 'test-payload'
 
 Outputs:
+  S3ObjectLambda:
+    Description: "API Gateway endpoint URL for Hello World function"
+    Value: !Sub https://${MyS3ObjectLambdaAccessPoint}-${AWS::AccountId}.s3-object-lambda.${AWS::Region}.amazonaws.com
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Hello World function"
     Value: !Sub "https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/test.png?accessToken=testabc"

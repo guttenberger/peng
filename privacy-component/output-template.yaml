@@ -7,13 +7,18 @@ Parameters:
 Globals:
   Function:
     Runtime: nodejs16.x
-    Timeout: 10
-    MemorySize: 512
+    Timeout: 300
+    MemorySize: 1024
+  Api:
+    Cors:
+      AllowOrigin: '''*'''
+      AllowMethods: '''*'''
+      AllowHeaders: '''*'''
 Resources:
   Authenticator:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/6fe1c9087aae8f3f8d0ea30ac4fe88b8
+      CodeUri: s3://peng-runtime/9b0a4dc5951c23f5169b354d496eec52
       Handler: authenticator.handler
     Metadata:
       SamResourceId: Authenticator
@@ -21,11 +26,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       BinaryMediaTypes:
-      - image/png
-      - image/jpg
-      - image/gif
-      - image/x-icon
-      - application/octet-stream
+      - '*/*'
       StageName:
         Ref: deploymentEnvironment
       Auth:
@@ -40,14 +41,15 @@ Resources:
             Identity:
               ReauthorizeEvery: 0
               QueryStrings:
-              - accessToken
+              - purposeToken
     Metadata:
       SamResourceId: AuthGateway
   GetObject:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/6fe1c9087aae8f3f8d0ea30ac4fe88b8
-      Handler: get-object.handler
+      CodeUri: s3://peng-runtime/9b0a4dc5951c23f5169b354d496eec52
+      Runtime: python3.8
+      Handler: get-object.lambda_handler
       Environment:
         Variables:
           BUCKET_NAME:
@@ -56,6 +58,8 @@ Resources:
             Fn::GetAtt:
             - MyS3ObjectLambdaAccessPoint
             - Arn
+          HTTPS_S3_ACCESS_POINT:
+            Fn::Sub: https://${MyS3ObjectLambdaAccessPoint}-${AWS::AccountId}.s3-object-lambda.${AWS::Region}.amazonaws.com
       Policies:
       - AmazonS3FullAccess
       - AWSLambda_FullAccess
@@ -84,16 +88,10 @@ Resources:
   MyS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/6fe1c9087aae8f3f8d0ea30ac4fe88b8
+      CodeUri: s3://peng-runtime/9b0a4dc5951c23f5169b354d496eec52
       Handler: anonymizer.handler
       Policies:
-      - S3CrudPolicy:
-          BucketName:
-            Ref: MyS3Bucket
-      - Statement:
-        - Effect: Allow
-          Action: s3-object-lambda:WriteGetObjectResponse
-          Resource: '*'
+      - AmazonS3FullAccess
     Metadata:
       SamResourceId: MyS3ObjectLambda
   MyS3AccessPoint:
@@ -122,10 +120,13 @@ Resources:
                 Fn::GetAtt:
                 - MyS3ObjectLambda
                 - Arn
-              FunctionPayload: test-payload
     Metadata:
       SamResourceId: MyS3ObjectLambdaAccessPoint
 Outputs:
+  S3ObjectLambda:
+    Description: API Gateway endpoint URL for Hello World function
+    Value:
+      Fn::Sub: https://${MyS3ObjectLambdaAccessPoint}-${AWS::AccountId}.s3-object-lambda.${AWS::Region}.amazonaws.com
   HelloWorldApi:
     Description: API Gateway endpoint URL for Hello World function
     Value:
