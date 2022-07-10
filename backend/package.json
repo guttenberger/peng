@@ -1,0 +1,15 @@
+{
+  "name": "healthphotos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "aws:init": "aws s3 mb s3://peng-proto-package",
+    "aws:clean": "aws s3 rm s3://peng-proto-package --recursive && aws s3 rm s3://health-stack-data --recursive && sam delete --stack-name health-stack",
+    "aws:package": "sam package --region eu-central-1 --s3-bucket peng-proto-package --output-template-file output-template.yaml",
+    "aws:deploy": "sam deploy --stack-name health-stack --template-file output-template.yaml",
+    "aws:seed": "aws s3 cp ../media s3://health-stack-data  --recursive"
+  },
+  "author": "",
+  "license": "MIT"
+}

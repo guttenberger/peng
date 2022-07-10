@@ -13,7 +13,7 @@ Resources:
   Authenticator:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/8063ad911ba6ddd86a5c15c70413d964
+      CodeUri: s3://peng-runtime/6fe1c9087aae8f3f8d0ea30ac4fe88b8
       Handler: authenticator.handler
     Metadata:
       SamResourceId: Authenticator
@@ -46,7 +46,7 @@ Resources:
   GetObject:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/8063ad911ba6ddd86a5c15c70413d964
+      CodeUri: s3://peng-runtime/6fe1c9087aae8f3f8d0ea30ac4fe88b8
       Handler: get-object.handler
       Environment:
         Variables:
@@ -84,7 +84,7 @@ Resources:
   MyS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/8063ad911ba6ddd86a5c15c70413d964
+      CodeUri: s3://peng-runtime/6fe1c9087aae8f3f8d0ea30ac4fe88b8
       Handler: anonymizer.handler
       Policies:
       - S3CrudPolicy:
