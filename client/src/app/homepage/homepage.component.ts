@@ -9,7 +9,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./homepage.component.css']
 })
 export class HomepageComponent implements OnInit {
-  fileHandlerService!: FileHandlerService;
+  title: string = 'Test page for prototype';
+  selectedPurpose: any;
+  purposes = [{
+    "id": 1,
+    "name": "Statistics",
+    "description": "Returns a CSV file containing the following fields: Postleitzahl, Testzentrum, Ergebnis"
+},
+{
+    "id": 2,
+    "name": "MinistryOfHealth",
+    "description": "Returns a CSV file containing the following fields: Nr., Anrede, Titel, Vorname, Nachname, Geburtsdatum, Strasse, Hausnummer, Postleitzahl, Stadt, Mobil, Email, Testzentrum, Ergebnis"
+}
+];
 
   constructor(private _fileHandlerService: FileHandlerService) { }
 
@@ -30,8 +42,24 @@ export class HomepageComponent implements OnInit {
     )
   }
 
+  downloadFileThroughPurpose(purpose: string): void {
+    const filename = 'testdaten.csv'
+    this._fileHandlerService.downloadFileWithPurpose(purpose).subscribe(
+        (response: any) =>{
+            let dataType = response.type;
+            let binaryData = [];
+            binaryData.push(response);
+            let downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
+            if (filename)
+                downloadLink.setAttribute('download', filename);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+    )
+  }
+
   ngOnInit(): void {
   }
-  title = 'Test page for prototype';
 
 }

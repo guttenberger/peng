@@ -14,4 +14,9 @@ export class FileHandlerService {
     const baseUrl = 'https://dmug9oijsb.execute-api.eu-central-1.amazonaws.com/Test/csv-archive/testdaten.csv';
     return this.http.get(baseUrl, {responseType: 'text'});
   }
+
+  downloadFileWithPurpose(purpose: string = "Statistics"): Observable<any> {
+    const baseUrl = 'https://6jt0zl69s3.execute-api.eu-central-1.amazonaws.com/test/objects/testdaten.csv?purposeToken=';
+    return this.http.get(baseUrl + purpose, {responseType: 'text'});
+  }
 }

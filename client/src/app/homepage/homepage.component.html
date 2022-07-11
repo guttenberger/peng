@@ -3,5 +3,15 @@
     {{ title }}
   </h1>
 </div>
-<h3>Click below link to get CSV file</h3>
+<h2>Click below link to get CSV file directly from the Server:</h2>
 <button (click)="downloadFile()">Download CSV</button>
+<h2>Click below link to get CSV file using a specified purpose:</h2>
+<div>
+  <h4>Please choose a purpose</h4>
+  <select [(ngModel)]="selectedPurpose">
+    <option *ngFor="let purpose of purposes" [ngValue]="purpose">{{purpose.name}}</option>
+  </select>
+  <p>{{selectedPurpose.description}}</p>
+</div>
+<!-- TODO: Make button unclickable when no purpose is selected -->
+<button (click)="downloadFileThroughPurpose(selectedPurpose.name)">Download CSV</button>
