@@ -18,7 +18,10 @@
     },
     {
         "purpose": "Statistics",
-        "purposeToken": "vNTJqJM90WyAz4gk2vVcVaSNTzIRoStF",
+        "purposeToken": "Statistics",
+        "expirationDate": "01 August 2023 00:00 UTC",
+        "description": "Allow the general public one year read access for covid-19 statics",
+        "purposeOwnerId": "1235",
         "transform": {
             "transform-operation": "csv-filter",
             "fields": [
@@ -31,7 +34,10 @@
     },
     {
         "purpose": "MinistryOfHealth",
-        "purposeToken": "ZDuhmEuaP5EIQ2BZMKMIlxeloXGhnvI2",
+        "purposeToken": "MinistryOfHealth",
+        "expirationDate": "01 January 2028 00:00 UTC",
+        "description": "Allow the ministry of health full read access",
+        "purposeOwnerId": "1235",
         "transform": {
             "transform-operation": "csv-filter",
             "fields": [
