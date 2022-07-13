@@ -9,19 +9,7 @@ Globals:
     Runtime: nodejs16.x
     Timeout: 300
     MemorySize: 1024
-  Api:
-    Cors:
-      AllowOrigin: '''*'''
-      AllowMethods: '''*'''
-      AllowHeaders: '''*'''
 Resources:
-  Authenticator:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: s3://peng-runtime/bd0e6b488d8f4050c972f74002e1da64
-      Handler: authenticator.handler
-    Metadata:
-      SamResourceId: Authenticator
   AuthGateway:
     Type: AWS::Serverless::Api
     Properties:
@@ -29,25 +17,12 @@ Resources:
       - '*/*'
       StageName:
         Ref: deploymentEnvironment
-      Auth:
-        DefaultAuthorizer: MyLambdaRequestAuthorizer
-        Authorizers:
-          MyLambdaRequestAuthorizer:
-            FunctionPayloadType: REQUEST
-            FunctionArn:
-              Fn::GetAtt:
-              - Authenticator
-              - Arn
-            Identity:
-              ReauthorizeEvery: 0
-              QueryStrings:
-              - purposeToken
     Metadata:
       SamResourceId: AuthGateway
   GetObject:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/bd0e6b488d8f4050c972f74002e1da64
+      CodeUri: s3://peng-runtime/60349a80ff80e86f91fa5504fcbe9f80
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:
@@ -86,7 +61,7 @@ Resources:
   MyS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/bd0e6b488d8f4050c972f74002e1da64
+      CodeUri: s3://peng-runtime/60349a80ff80e86f91fa5504fcbe9f80
       Handler: anonymizer.handler
       Policies:
       - AmazonS3FullAccess
