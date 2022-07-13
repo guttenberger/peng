@@ -1,13 +1,22 @@
+from ipaddress import ip_address
 import os
 import boto3
 import base64
 
+
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
     s3Bucket = os.environ['S3_ACCESS_POINT']
-    s3Key = event["pathParameters"]["id"] + "#" + event["queryStringParameters"]["purposeToken"]
+    contextStrings = '#'
 
-    response = s3.get_object(Bucket=s3Bucket,Key=s3Key)
+    for key, value in event['queryStringParameters'].items():
+        contextStrings += key + '=' + value + ','
+
+    contextStrings += 'userIpAddress=' + \
+        event['requestContext']['identity']['sourceIp']
+
+    s3Key = event['pathParameters']['id'] + contextStrings
+    response = s3.get_object(Bucket=s3Bucket, Key=s3Key)
 
     return {
         "statusCode": 200,

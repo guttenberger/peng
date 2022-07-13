@@ -4,23 +4,33 @@ const { transform, accessFilter } = require("./interceptor");
 
 const s3 = new S3();
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
   // Output the event details to CloudWatch Logs.
-  console.log("Datatransform-Event:\n", JSON.stringify(event, null, 2));
+  console.log("Datatransform-Event:\n", JSON.stringify({ event, context }, null, 2));
 
   const { getObjectContext } = event;
   const { outputRoute, outputToken } = getObjectContext;
 
-  const [route, purposeToken] = event.userRequest.url.split(encodeURIComponent("#"));
+  const [route, contextStrings] = decodeURIComponent(event.userRequest.url).split("#");
 
-  const { isAllowed, responseContext } = accessFilter(event, {}, purposeToken);
-  console.log({ isAllowed, responseContext });
+  const userRequestContext = {};
+
+  for (const contextString of contextStrings.split(',')) {
+    if (!contextString) break;
+
+    const [contextKey, contextValue] = contextString.split("=");
+    userRequestContext[contextKey] = contextValue;
+  }
+
+  const { isAllowed, responseContext } = accessFilter(event, userRequestContext);
 
   if (!isAllowed) {
     await s3.writeGetObjectResponse({
       StatusCode: 403,
       ErrorCode: 'NotAuthorized',
-      ErrorMessage: 'Not Authorized'
+      ErrorMessage: 'Not Authorized',
+      RequestRoute: outputRoute,
+      RequestToken: outputToken
     }).promise();
 
     return { 'status_code': 403 }
@@ -29,7 +39,7 @@ exports.handler = async (event) => {
   const supporting_access_point_arn = event["configuration"]["supportingAccessPointArn"];
   const s3key = route.split(`${event.userRequest.headers.Host}/`).pop();
 
-  const { ContentType, Body, ContentLength } = await s3.getObject({
+  const { ContentType, Body } = await s3.getObject({
     Bucket: supporting_access_point_arn,
     Key: s3key
   }).promise();
@@ -42,8 +52,6 @@ exports.handler = async (event) => {
     ContentType,
     Body: modifiedObject
   };
-
-  console.log(params);
 
   await s3.writeGetObjectResponse(params).promise();
 

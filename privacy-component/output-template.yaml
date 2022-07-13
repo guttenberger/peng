@@ -18,7 +18,7 @@ Resources:
   Authenticator:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/430ba41e89d7a3462ddf644ae21baa42
+      CodeUri: s3://peng-runtime/bd0e6b488d8f4050c972f74002e1da64
       Handler: authenticator.handler
     Metadata:
       SamResourceId: Authenticator
@@ -47,7 +47,7 @@ Resources:
   GetObject:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/430ba41e89d7a3462ddf644ae21baa42
+      CodeUri: s3://peng-runtime/bd0e6b488d8f4050c972f74002e1da64
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:
@@ -58,8 +58,6 @@ Resources:
             Fn::GetAtt:
             - MyS3ObjectLambdaAccessPoint
             - Arn
-          HTTPS_S3_ACCESS_POINT:
-            Fn::Sub: https://${MyS3ObjectLambdaAccessPoint}-${AWS::AccountId}.s3-object-lambda.${AWS::Region}.amazonaws.com
       Policies:
       - AmazonS3FullAccess
       - AWSLambda_FullAccess
@@ -88,7 +86,7 @@ Resources:
   MyS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/430ba41e89d7a3462ddf644ae21baa42
+      CodeUri: s3://peng-runtime/bd0e6b488d8f4050c972f74002e1da64
       Handler: anonymizer.handler
       Policies:
       - AmazonS3FullAccess
