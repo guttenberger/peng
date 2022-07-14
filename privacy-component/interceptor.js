@@ -1,31 +1,19 @@
 // @ts-check
+const csvFilter = require("./filter-functions/csv-filter");
+const { purposeAuthentication } = require("./auth-functions/purpose-auth");
+const { attributeAuthentication } = require("./auth-functions/attribute-auth");
 
-const purposeConfig = require("./purpose-config.json");
-const csvFilter = require("./filters/csv-filter");
 
 const accessFilter = (awsEvent, userRequestContext) => {
     console.log("Filter-Event:\n", JSON.stringify({ userRequestContext, awsEvent }, null, 2));
 
     const [hasAllowedPurpose, purposeContext] = purposeAuthentication(userRequestContext);
-    // const [hasAllowedIp] = ipAuthentication(userRequestContext)
+    const [hasAllowedAttributes] = attributeAuthentication(userRequestContext);
 
     return {
-        // isAllowed: hasAllowedPurpose && hasAllowedIp,
-        isAllowed: hasAllowedPurpose,
+        isAllowed: hasAllowedPurpose && hasAllowedAttributes,
         responseContext: { purposeContext }
     };
-}
-
-function purposeAuthentication(userRequestContext) {
-    const purposeContext = purposeConfig.find(el => el.purposeToken === userRequestContext.purposeToken);
-
-    return [!!purposeContext, purposeContext];
-}
-
-function ipAuthentication(userRequestContext) {
-    const allowedIpAddresses = ['83.135.78.120']
-
-    return [allowedIpAddresses.includes(userRequestContext.userIpAddress)];
 }
 
 async function transform(awsEvent, userRequestContext, s3object) {

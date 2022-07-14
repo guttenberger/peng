@@ -10,7 +10,7 @@
     "aws:package": "sam package --region eu-central-1 --s3-bucket peng-runtime --output-template-file output-template.yaml",
     "aws:deploy": "sam deploy --stack-name peng --template-file output-template.yaml --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND",
     "aws:package:deploy": "npm run aws:package && npm run aws:deploy",
-    "aws:seed": "aws s3 cp ../media s3://peng-data/ --recursive",
+    "aws:seed": "aws s3 cp ../s3media s3://peng-data/ --recursive",
     "aws:reset": "npm run aws:clean && npm run aws:package && npm run aws:deploy && npm run aws:seed"
   },
   "keywords": [],

@@ -6,23 +6,15 @@ const s3 = new S3();
 
 exports.handler = async (event, context) => {
   // Output the event details to CloudWatch Logs.
-  console.log("Datatransform-Event:\n", JSON.stringify({ event, context }, null, 2));
+  console.log("PrivacyLambda-Event:\n", JSON.stringify({ event, context }, null, 2));
 
   const { getObjectContext } = event;
   const { outputRoute, outputToken } = getObjectContext;
 
-  const [route, contextStrings] = decodeURIComponent(event.userRequest.url).split("#");
+  const [route, userContextString] = decodeURIComponent(event.userRequest.url).split("#");
+  const userContext = JSON.parse(userContextString);
 
-  const userRequestContext = {};
-
-  for (const contextString of contextStrings.split(',')) {
-    if (!contextString) break;
-
-    const [contextKey, contextValue] = contextString.split("=");
-    userRequestContext[contextKey] = contextValue;
-  }
-
-  const { isAllowed, responseContext } = accessFilter(event, userRequestContext);
+  const { isAllowed, responseContext } = accessFilter(event, userContext);
 
   if (!isAllowed) {
     await s3.writeGetObjectResponse({

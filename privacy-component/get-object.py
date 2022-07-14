@@ -1,20 +1,25 @@
 import os
 import boto3
 import base64
+import logging
+import json
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
+    logger.info(f'GetObject-Event: {event}')
+
     s3 = boto3.client('s3')
     s3Bucket = os.environ['S3_ACCESS_POINT']
-    contextStrings = '#'
 
-    for key, value in event['queryStringParameters'].items():
-        contextStrings += key + '=' + value + ','
+    userContext = event['queryStringParameters']
+    userContext['userIpAddress'] = event['requestContext']['identity']['sourceIp']
+    userContext['userArn'] = event['requestContext']['identity']['userArn']
 
-    contextStrings += 'userIpAddress=' + \
-        event['requestContext']['identity']['sourceIp']
+    userContextJson = json.dumps(userContext)
 
-    s3Key = event['pathParameters']['id'] + contextStrings
+    s3Key = event['pathParameters']['id'] + '#' + userContextJson
     response = s3.get_object(Bucket=s3Bucket, Key=s3Key)
 
     return {
