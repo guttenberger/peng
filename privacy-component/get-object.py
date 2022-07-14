@@ -1,4 +1,3 @@
-from ipaddress import ip_address
 import os
 import boto3
 import base64

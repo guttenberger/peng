@@ -1,3 +1,5 @@
+// @ts-check
+
 const purposeConfig = require("./purpose-config.json");
 const csvFilter = require("./filters/csv-filter");
 

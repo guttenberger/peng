@@ -5,62 +5,26 @@ Parameters:
   deploymentEnvironment:
     Type: String
     Default: "test"
+  S3BucketName:
+    Type: String
+    Default: "peng-data"
 
 Globals:
   Function:
-    Runtime: nodejs16.x
     Timeout: 300
     MemorySize: 1024
 
 Resources:
-  #Custom auth filter
-  AuthGateway:
-    Type: AWS::Serverless::Api
-    Properties:
-      BinaryMediaTypes:
-        - '*/*'
-      StageName: !Ref deploymentEnvironment
-
-  GetObject:
+  # PrivacyInterceptor
+  PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./
-      Runtime: python3.8
-      Handler: get-object.lambda_handler
-      Environment:
-        Variables:
-          BUCKET_NAME: !Ref MyS3Bucket
-          S3_ACCESS_POINT: !GetAtt MyS3ObjectLambdaAccessPoint.Arn
-      Policies: 
-        - AmazonS3FullAccess
-        - AWSLambda_FullAccess
-      Events:
-        GetRoot:
-          Type: Api
-          Properties:
-            RestApiId: !Ref AuthGateway
-            Path: /objects/{id}
-            Method: get
-
-  # Bucket
-  MyS3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "${AWS::StackName}-data"
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
-
-  # Bucket Data Transform
-  MyS3ObjectLambda:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./
-      Handler: anonymizer.handler
+      Runtime: nodejs16.x
+      Handler: privacy-lambda.handler
       Policies:
         - AmazonS3FullAccess
+        # AmazonS3ObjectLambdaExecutionRolePolicy
         # - S3CrudPolicy:
         #     BucketName: !Ref MyS3Bucket
         # - Statement:
@@ -69,30 +33,55 @@ Resources:
         #     Resource: '*'
 
   # S3 Access Point (Network origin: Internet)
-  MyS3AccessPoint:
+  SupportAccessPoint:
     Type: 'AWS::S3::AccessPoint'
     Properties:
-      Bucket: !Ref MyS3Bucket
+      Bucket: !Ref S3BucketName
       Name: !Sub "${AWS::StackName}-support"
 
-  MyS3ObjectLambdaAccessPoint:
+  PrivacyS3ObjectLambdaAccessPoint:
     Type: 'AWS::S3ObjectLambda::AccessPoint'
     Properties: 
       Name:  !Sub "${AWS::StackName}-anon"
       ObjectLambdaConfiguration:
-        SupportingAccessPoint: !Sub 'arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${MyS3AccessPoint}'
+        SupportingAccessPoint: !Sub 'arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${SupportAccessPoint}'
         TransformationConfigurations: 
-        - Actions: 
+        - Actions:
             - GetObject
           ContentTransformation: 
             AwsLambda:
-              FunctionArn: !GetAtt MyS3ObjectLambda.Arn
-              # FunctionPayload: 'test-payload'
+              FunctionArn: !GetAtt PrivacyLambda.Arn
+
+  # Access S3 Object Lambda Microservice
+  GetS3ObjectApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      BinaryMediaTypes:
+        - '*/*'
+      StageName: !Ref deploymentEnvironment
+
+  GetS3ObjectLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Runtime: python3.8
+      Handler: get-object.lambda_handler
+      Environment:
+        Variables:
+          S3_ACCESS_POINT: !GetAtt PrivacyS3ObjectLambdaAccessPoint.Arn
+      Policies:
+      # AmazonS3ReadOnlyAccess
+        - AmazonS3FullAccess
+        - AWSLambda_FullAccess
+      Events:
+        GetRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref GetS3ObjectApi
+            Path: /objects/{id}
+            Method: get
 
 Outputs:
-  S3ObjectLambda:
-    Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub https://${MyS3ObjectLambdaAccessPoint}-${AWS::AccountId}.s3-object-lambda.${AWS::Region}.amazonaws.com
   HelloWorldApi:
-    Description: "API Gateway endpoint URL for Hello World function"
-    Value: !Sub "https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/test.png?accessToken=testabc"
+    Description: "API Gateway endpoint for testdata.csv"
+    Value: !Sub "https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/testdata.csv"

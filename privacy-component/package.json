@@ -5,9 +5,11 @@
   "main": "app.js",
   "scripts": {
     "aws:init": "aws s3 mb s3://peng-runtime",
+    "aws:rb": "aws s3 mb s3://peng-data",
     "aws:clean": "aws s3 rm s3://peng-runtime --recursive && aws s3 rm s3://peng-data --recursive && sam delete --stack-name peng",
     "aws:package": "sam package --region eu-central-1 --s3-bucket peng-runtime --output-template-file output-template.yaml",
-    "aws:deploy": "sam deploy --stack-name peng --template-file output-template.yaml",
+    "aws:deploy": "sam deploy --stack-name peng --template-file output-template.yaml --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND",
+    "aws:package:deploy": "npm run aws:package && npm run aws:deploy",
     "aws:seed": "aws s3 cp ../media s3://peng-data/ --recursive",
     "aws:reset": "npm run aws:clean && npm run aws:package && npm run aws:deploy && npm run aws:seed"
   },

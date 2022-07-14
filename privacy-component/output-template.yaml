@@ -4,13 +4,53 @@ Parameters:
   deploymentEnvironment:
     Type: String
     Default: test
+  S3BucketName:
+    Type: String
+    Default: peng-data
 Globals:
   Function:
-    Runtime: nodejs16.x
     Timeout: 300
     MemorySize: 1024
 Resources:
-  AuthGateway:
+  PrivacyLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://peng-runtime/351e8bebe6d6a4d7d9e3bd2301539338
+      Runtime: nodejs16.x
+      Handler: privacy-lambda.handler
+      Policies:
+      - AmazonS3FullAccess
+    Metadata:
+      SamResourceId: PrivacyLambda
+  SupportAccessPoint:
+    Type: AWS::S3::AccessPoint
+    Properties:
+      Bucket:
+        Ref: S3BucketName
+      Name:
+        Fn::Sub: ${AWS::StackName}-support
+    Metadata:
+      SamResourceId: SupportAccessPoint
+  PrivacyS3ObjectLambdaAccessPoint:
+    Type: AWS::S3ObjectLambda::AccessPoint
+    Properties:
+      Name:
+        Fn::Sub: ${AWS::StackName}-anon
+      ObjectLambdaConfiguration:
+        SupportingAccessPoint:
+          Fn::Sub: arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${SupportAccessPoint}
+        TransformationConfigurations:
+        - Actions:
+          - GetObject
+          ContentTransformation:
+            AwsLambda:
+              FunctionArn:
+                Fn::GetAtt:
+                - PrivacyLambda
+                - Arn
+    Metadata:
+      SamResourceId: PrivacyS3ObjectLambdaAccessPoint
+  GetS3ObjectApi:
     Type: AWS::Serverless::Api
     Properties:
       BinaryMediaTypes:
@@ -18,20 +58,18 @@ Resources:
       StageName:
         Ref: deploymentEnvironment
     Metadata:
-      SamResourceId: AuthGateway
-  GetObject:
+      SamResourceId: GetS3ObjectApi
+  GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/60349a80ff80e86f91fa5504fcbe9f80
+      CodeUri: s3://peng-runtime/351e8bebe6d6a4d7d9e3bd2301539338
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:
         Variables:
-          BUCKET_NAME:
-            Ref: MyS3Bucket
           S3_ACCESS_POINT:
             Fn::GetAtt:
-            - MyS3ObjectLambdaAccessPoint
+            - PrivacyS3ObjectLambdaAccessPoint
             - Arn
       Policies:
       - AmazonS3FullAccess
@@ -41,66 +79,13 @@ Resources:
           Type: Api
           Properties:
             RestApiId:
-              Ref: AuthGateway
+              Ref: GetS3ObjectApi
             Path: /objects/{id}
             Method: get
     Metadata:
-      SamResourceId: GetObject
-  MyS3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName:
-        Fn::Sub: ${AWS::StackName}-data
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
-    Metadata:
-      SamResourceId: MyS3Bucket
-  MyS3ObjectLambda:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: s3://peng-runtime/60349a80ff80e86f91fa5504fcbe9f80
-      Handler: anonymizer.handler
-      Policies:
-      - AmazonS3FullAccess
-    Metadata:
-      SamResourceId: MyS3ObjectLambda
-  MyS3AccessPoint:
-    Type: AWS::S3::AccessPoint
-    Properties:
-      Bucket:
-        Ref: MyS3Bucket
-      Name:
-        Fn::Sub: ${AWS::StackName}-support
-    Metadata:
-      SamResourceId: MyS3AccessPoint
-  MyS3ObjectLambdaAccessPoint:
-    Type: AWS::S3ObjectLambda::AccessPoint
-    Properties:
-      Name:
-        Fn::Sub: ${AWS::StackName}-anon
-      ObjectLambdaConfiguration:
-        SupportingAccessPoint:
-          Fn::Sub: arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${MyS3AccessPoint}
-        TransformationConfigurations:
-        - Actions:
-          - GetObject
-          ContentTransformation:
-            AwsLambda:
-              FunctionArn:
-                Fn::GetAtt:
-                - MyS3ObjectLambda
-                - Arn
-    Metadata:
-      SamResourceId: MyS3ObjectLambdaAccessPoint
+      SamResourceId: GetS3ObjectLambda
 Outputs:
-  S3ObjectLambda:
-    Description: API Gateway endpoint URL for Hello World function
-    Value:
-      Fn::Sub: https://${MyS3ObjectLambdaAccessPoint}-${AWS::AccountId}.s3-object-lambda.${AWS::Region}.amazonaws.com
   HelloWorldApi:
-    Description: API Gateway endpoint URL for Hello World function
+    Description: API Gateway endpoint for testdata.csv
     Value:
-      Fn::Sub: https://${AuthGateway}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/test.png?accessToken=testabc
+      Fn::Sub: https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/testdata.csv
