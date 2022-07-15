@@ -19,7 +19,10 @@ def lambda_handler(event, context):
 
     userContextJson = json.dumps(userContext)
 
-    s3Key = event['pathParameters']['id'] + '#' + userContextJson
+    if "#CONTEXTSTART#" in event['pathParameters']['id']:
+        raise ValueError('S3 File is not allowed to have #CONTEXTSTART# in name')
+
+    s3Key = event['pathParameters']['id'] + '#CONTEXTSTART#' + userContextJson
     response = s3.get_object(Bucket=s3Bucket, Key=s3Key)
 
     return {

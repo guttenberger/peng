@@ -11,7 +11,7 @@ exports.handler = async (event, context) => {
   const { getObjectContext } = event;
   const { outputRoute, outputToken } = getObjectContext;
 
-  const [route, userContextString] = decodeURIComponent(event.userRequest.url).split("#");
+  const [route, userContextString] = decodeURIComponent(event.userRequest.url).split("#CONTEXTSTART#");
   const userContext = JSON.parse(userContextString);
 
   const { isAllowed, responseContext } = accessFilter(event, userContext);
