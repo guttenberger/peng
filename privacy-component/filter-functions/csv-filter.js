@@ -18,18 +18,37 @@ const params = {
 const fastCsv = require("fast-csv");
 const createCsvStringifier = require("csv-writer").createObjectCsvStringifier;
 
+const fieldOperations = {
+  "hide-last-two-characters": field => field.slice(0, -2) + 'xx',
+  // slice() instead of data class because JS Date does not work with dates before 1970
+  "year-only": field => field.slice(-4),
+};
+
+function anonymize(row, operations) {
+  for (const [field, operation] of Object.entries(operations)) {
+    const hasEmptyValue = !row[field];
+    if (hasEmptyValue) continue;
+
+    row[field] = fieldOperations[operation](row[field]);
+  }
+
+  return row;
+}
+
 function filter(csvFile, fields = []) {
   const csvString = csvFile.toString('utf-8');
-  const operations = [];
+  const headers = [];
+  const operations = {};
 
-  const headers = fields.map(
-    field => typeof fields === "string"
-      ? field
-      : Object.keys(field)[0]
-  );
+  // check for data anonymization operations
+  for (const field of fields) {
+    typeof field === "string"
+      ? headers.push(field)
+      : headers.push(Object.keys(field)[0]) && Object.assign(operations, field)
+  }
 
   const csvWriter = createCsvStringifier({
-    header: fields.map(head => ({
+    header: headers.map(head => ({
       id: head, title: head
     })),
     fieldDelimiter: ';'
@@ -48,13 +67,20 @@ function filter(csvFile, fields = []) {
 
     fastCsv.parseString(csvString, options)
       .on("error", reject)
-      .on("data", (row) => {
-        data.push(row);
+      .on("data", row => {
+        if (!operations) {
+          data.push(row);
+          return;
+        }
+
+        const resultRow = anonymize(row, operations);
+        data.push(resultRow);
       })
       .on("end", _ => {
-        const result = csvWriter.stringifyRecords(data);
-        console.log(result);
-        resolve(Buffer.from(result, 'utf-8'));
+        const header = csvWriter.getHeaderString();
+        const resultCsv = header?.concat(csvWriter.stringifyRecords(data));
+
+        if (resultCsv) resolve(Buffer.from(resultCsv, 'utf-8'));
       });
   });
 }

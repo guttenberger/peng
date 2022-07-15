@@ -6,7 +6,7 @@
             "transform-operation": "csv-filter",
             "fields": [
                 {
-                    "Postleitzahl": "remove-last-two-numbers"
+                    "Postleitzahl": "hide-last-two-characters"
                 },
                 {
                     "Geburtsdatum": "year-only"
