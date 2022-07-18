@@ -150,6 +150,13 @@ Resources:
             Path: /csv-archive/
             Method: post
 
+  PrivacyAccessPoint:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "../privacy-component/output-template.yaml"
+      Parameters:
+        S3BucketName: !Ref CsvBucket
+
 Outputs:
   HealthPhotoRestApiUrl:
     Description: "Severless REST api for health photos"

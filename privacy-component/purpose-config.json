@@ -2,8 +2,9 @@
     {
         "purpose": "CancerResearch",
         "purposeToken": "Y9xxdhfKbh9zRHiv4w9ywmqdhAiVgGg6",
-        "transform": {
-            "transform-operation": "csv-filter",
+        "expirationDate": "01 August 2023 00:00 UTC",
+        "filter": {
+            "operation": "csv-filter",
             "fields": [
                 {
                     "Postleitzahl": "hide-last-two-characters"
@@ -18,12 +19,12 @@
     },
     {
         "purpose": "Statistics",
+        "description": "Allow the general public one year read access for covid-19 statics",
         "purposeToken": "Statistics",
         "expirationDate": "01 August 2023 00:00 UTC",
-        "description": "Allow the general public one year read access for covid-19 statics",
         "purposeOwnerId": "1235",
-        "transform": {
-            "transform-operation": "csv-filter",
+        "filter": {
+            "operation": "csv-filter",
             "fields": [
                 "Nr",
                 "Postleitzahl",
@@ -34,12 +35,12 @@
     },
     {
         "purpose": "MinistryOfHealth",
+        "description": "Allow the ministry of health full read access",
         "purposeToken": "MinistryOfHealth",
         "expirationDate": "01 January 2028 00:00 UTC",
-        "description": "Allow the ministry of health full read access",
         "purposeOwnerId": "1235",
-        "transform": {
-            "transform-operation": "csv-filter",
+        "filter": {
+            "operation": "csv-filter",
             "fields": [
                 "Nr",
                 "Anrede",

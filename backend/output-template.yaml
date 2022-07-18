@@ -166,6 +166,15 @@ Resources:
             Method: post
     Metadata:
       SamResourceId: CsvApi
+  PrivacyAccessPoint:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/d9d4ef56da5e00e8a334c6b3807b56e6.template
+      Parameters:
+        S3BucketName:
+          Ref: CsvBucket
+    Metadata:
+      SamResourceId: PrivacyAccessPoint
 Outputs:
   HealthPhotoRestApiUrl:
     Description: Severless REST api for health photos

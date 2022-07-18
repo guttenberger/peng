@@ -1,6 +1,12 @@
 // required modules
 const fs = require('fs');
 const piexif = require('piexifjs');
+
+function filter(photo, options) {
+  // options.operation === 'clearMetadata' , noise
+  // newLatitudeDecimal, newLatitudeRef, newLongitudeDecimal, newLongitudeRef
+}
+
 // utility functions
 const getBase64DataFromJpegFile = filename => fs.readFileSync(filename).toString('binary');
 const getExifFromJpegFile = filename => piexif.load(getBase64DataFromJpegFile(filename));

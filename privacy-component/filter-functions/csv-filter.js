@@ -20,8 +20,7 @@ const createCsvStringifier = require("csv-writer").createObjectCsvStringifier;
 
 const fieldOperations = {
   "hide-last-two-characters": field => field.slice(0, -2) + 'xx',
-  // slice() instead of data class because JS Date does not work with dates before 1970
-  "year-only": field => field.slice(-4),
+  "year-only": field => field.slice(-4),// slice() because JS Date does not work with dates before 1970
 };
 
 function anonymize(row, operations) {
@@ -77,8 +76,9 @@ function filter(csvFile, fields = []) {
         data.push(resultRow);
       })
       .on("end", _ => {
-        const header = csvWriter.getHeaderString();
-        const resultCsv = header?.concat(csvWriter.stringifyRecords(data));
+        const headerRow = csvWriter.getHeaderString();
+        const dataRow = csvWriter.stringifyRecords(data);
+        const resultCsv = headerRow.concat(dataRow);
 
         if (resultCsv) resolve(Buffer.from(resultCsv, 'utf-8'));
       });

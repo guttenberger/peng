@@ -16,15 +16,17 @@ const accessFilter = (awsEvent, userRequestContext) => {
     };
 }
 
+const transformFilter = {
+    "csv-filter": (csvFile, fields) => csvFilter.filter(csvFile, fields)
+}
+
 async function transform(awsEvent, userRequestContext, s3object) {
     console.log("Transform-Event:\n", JSON.stringify({ event: awsEvent, userRequestContext, s3object }, null, 2));
 
-    const { transform } = userRequestContext.purposeContext;
+    const { operation, fields } = userRequestContext?.purposeContext?.filter ?? {};
 
-    switch (transform["transform-operation"]) {
-        case "csv-filter":
-            return await csvFilter.filter(s3object, transform.fields);
-    }
+    if (operation)
+        return await transformFilter[operation](s3object, fields);
 
     return s3object;
 }

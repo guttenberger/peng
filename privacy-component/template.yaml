@@ -9,6 +9,7 @@ Parameters:
     Type: String
     Default: "peng-data"
 
+
 Globals:
   Function:
     Timeout: 300
@@ -37,12 +38,12 @@ Resources:
     Type: 'AWS::S3::AccessPoint'
     Properties:
       Bucket: !Ref S3BucketName
-      Name: !Sub "${AWS::StackName}-support"
+      Name: !Sub "${S3BucketName}-support"
 
   PrivacyS3ObjectLambdaAccessPoint:
     Type: 'AWS::S3ObjectLambda::AccessPoint'
     Properties: 
-      Name:  !Sub "${AWS::StackName}-anon"
+      Name:  !Sub "${S3BucketName}-privacy"
       ObjectLambdaConfiguration:
         SupportingAccessPoint: !Sub 'arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${SupportAccessPoint}'
         TransformationConfigurations: 
@@ -78,7 +79,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref GetS3ObjectApi
-            Path: /objects/{id}
+            Path: /anonymize/{id}
             Method: get
 
 Outputs:

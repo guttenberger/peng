@@ -15,7 +15,7 @@ Resources:
   PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/b850e597a83c333bf4e99ed06558be16
+      CodeUri: s3://peng-runtime/1bd5d4b16d0999223440c06df26e43ef
       Runtime: nodejs16.x
       Handler: privacy-lambda.handler
       Policies:
@@ -28,14 +28,14 @@ Resources:
       Bucket:
         Ref: S3BucketName
       Name:
-        Fn::Sub: ${AWS::StackName}-support
+        Fn::Sub: ${S3BucketName}-support
     Metadata:
       SamResourceId: SupportAccessPoint
   PrivacyS3ObjectLambdaAccessPoint:
     Type: AWS::S3ObjectLambda::AccessPoint
     Properties:
       Name:
-        Fn::Sub: ${AWS::StackName}-anon
+        Fn::Sub: ${S3BucketName}-privacy
       ObjectLambdaConfiguration:
         SupportingAccessPoint:
           Fn::Sub: arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${SupportAccessPoint}
@@ -62,7 +62,7 @@ Resources:
   GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/b850e597a83c333bf4e99ed06558be16
+      CodeUri: s3://peng-runtime/1bd5d4b16d0999223440c06df26e43ef
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:
