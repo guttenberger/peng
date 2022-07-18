@@ -13,11 +13,11 @@ Globals:
       AllowHeaders: "'*'"
 
 Resources:
-  # General Api Gateway
+  # Shared Api Gateway for csv and photo archive
   MyS3Api:
     Type: 'AWS::Serverless::Api'
     Properties:
-      Name: !Sub "${AWS::StackName}-temp" 
+      Name: !Sub "${AWS::StackName}-api" 
       StageName: Test
       Cors:
         AllowOrigin: "'*'"
@@ -26,11 +26,13 @@ Resources:
       BinaryMediaTypes:
         - '*/*'
 
-  # Photo service
-  PhotoBucket:
+  ### Jpg archive service ###
+
+  # AWS S3 Bucket for storing jpg files
+  JpgBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: !Sub "${AWS::StackName}-data"
+      BucketName: !Sub "${AWS::StackName}-jpg"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -41,75 +43,44 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
-  RestApi:
+  # Serverless rest microservice for accessing jpg files from the s3 bucket
+  JpgApi:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: healthphotos/
+      CodeUri: jpg-archive/
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
         Variables:
-          BUCKET_NAME: !Ref PhotoBucket
+          BUCKET_NAME: !Ref JpgBucket
       Policies: AmazonS3FullAccess
       Events:
-        GetHealthphoto:
+        GetJpg:
           Type: Api
           Properties:
             RestApiId: !Ref MyS3Api
-            Path: /healthphotos/{id}
+            Path: /jpg-archive/{id}
             Method: any
         GetRoot:
           Type: Api
           Properties:
             RestApiId: !Ref MyS3Api
-            Path: /healthphotos/
+            Path: /jpg-archive/
             Method: get
         PostRoot:
           Type: Api
           Properties:
             RestApiId: !Ref MyS3Api
-            Path: /healthphotos/
+            Path: /jpg-archive/
             Method: post
 
-  # Patient service
-  PatientTable:
-    Type: AWS::Serverless::SimpleTable
+  ###  Csv archive service ###
 
-  Patient:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: patient/
-      Handler: app.handler
-      Runtime: nodejs16.x
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref PatientTable
-      Policies: AmazonDynamoDBFullAccess
-      Events:
-        AddPatient:
-          Type: Api
-          Properties:
-            Path: /patients
-            Method: post
-            RestApiId: !Ref MyS3Api
-        ListPatient:
-          Type: Api
-          Properties:
-            Path: /patients
-            Method: get
-            RestApiId: !Ref MyS3Api
-        Patient:
-          Type: Api
-          Properties:
-            Path: /patients/{id}
-            Method: any
-            RestApiId: !Ref MyS3Api
-
-  # csv archive service
+  # AWS S3 Bucket for storing csv files
   CsvBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: !Sub "${AWS::StackName}-csv-archive"
+      BucketName: !Sub "${AWS::StackName}-csv"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -119,7 +90,8 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-
+  
+  # Serverless rest microservice for accessing jpg files from the s3 bucket
   CsvApi:
     Type: AWS::Serverless::Function
     Properties:
@@ -150,17 +122,32 @@ Resources:
             Path: /csv-archive/
             Method: post
 
-  PrivacyAccessPoint:
+  ### Privacy Access Points ###
+
+  PrivacyCsvAccessPoint:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "../privacy-component/output-template.yaml"
       Parameters:
         S3BucketName: !Ref CsvBucket
 
+  PrivacyJpgAccessPoint:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "../privacy-component/output-template.yaml"
+      Parameters:
+        S3BucketName: !Ref JpgBucket
+
 Outputs:
-  HealthPhotoRestApiUrl:
-    Description: "Severless REST api for health photos"
-    Value: !Sub  "https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/healthphotos/"
-  PatientRestApiUrl:
-    Description: "Severless REST api for patient data"
+  NormalJpgRestApi:
+    Description: "Severless normal REST api for jpg files"
+    Value: !Sub  "https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/jpg-archive/"
+  PrivacyConformJpgApi:
+    Description: "Severless privacy conform api for jpg files"
+    Value: !GetAtt PrivacyJpgAccessPoint.Outputs.PrivacyAccessApi
+  NormalCsvRestApi:
+    Description: "Severless REST api for csv data"
     Value: !Sub  "https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/csv-archive/"
+  PrivacyConformCsvApi:
+    Description: "Severless privacy conform api for csv files"
+    Value: !GetAtt PrivacyCsvAccessPoint.Outputs.PrivacyAccessApi

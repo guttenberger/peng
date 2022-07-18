@@ -15,7 +15,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       Name:
-        Fn::Sub: ${AWS::StackName}-temp
+        Fn::Sub: ${AWS::StackName}-api
       StageName: Test
       Cors:
         AllowOrigin: '''*'''
@@ -25,11 +25,11 @@ Resources:
       - '*/*'
     Metadata:
       SamResourceId: MyS3Api
-  PhotoBucket:
+  JpgBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName:
-        Fn::Sub: ${AWS::StackName}-data
+        Fn::Sub: ${AWS::StackName}-jpg
       BucketEncryption:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
@@ -40,86 +40,47 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
     Metadata:
-      SamResourceId: PhotoBucket
-  RestApi:
+      SamResourceId: JpgBucket
+  JpgApi:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-proto-package/af011f7319763c364060aedcd67287f8
+      CodeUri: s3://peng-proto-package/090e447a79e4485b581f578304b8e739
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
         Variables:
           BUCKET_NAME:
-            Ref: PhotoBucket
+            Ref: JpgBucket
       Policies: AmazonS3FullAccess
       Events:
-        GetHealthphoto:
+        GetJpg:
           Type: Api
           Properties:
             RestApiId:
               Ref: MyS3Api
-            Path: /healthphotos/{id}
+            Path: /jpg-archive/{id}
             Method: any
         GetRoot:
           Type: Api
           Properties:
             RestApiId:
               Ref: MyS3Api
-            Path: /healthphotos/
+            Path: /jpg-archive/
             Method: get
         PostRoot:
           Type: Api
           Properties:
             RestApiId:
               Ref: MyS3Api
-            Path: /healthphotos/
+            Path: /jpg-archive/
             Method: post
     Metadata:
-      SamResourceId: RestApi
-  PatientTable:
-    Type: AWS::Serverless::SimpleTable
-    Metadata:
-      SamResourceId: PatientTable
-  Patient:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: s3://peng-proto-package/41420e69a4414f16b7ac309b5a0b7a4a
-      Handler: app.handler
-      Runtime: nodejs16.x
-      Environment:
-        Variables:
-          TABLE_NAME:
-            Ref: PatientTable
-      Policies: AmazonDynamoDBFullAccess
-      Events:
-        AddPatient:
-          Type: Api
-          Properties:
-            Path: /patients
-            Method: post
-            RestApiId:
-              Ref: MyS3Api
-        ListPatient:
-          Type: Api
-          Properties:
-            Path: /patients
-            Method: get
-            RestApiId:
-              Ref: MyS3Api
-        Patient:
-          Type: Api
-          Properties:
-            Path: /patients/{id}
-            Method: any
-            RestApiId:
-              Ref: MyS3Api
-    Metadata:
-      SamResourceId: Patient
+      SamResourceId: JpgApi
   CsvBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName:
-        Fn::Sub: ${AWS::StackName}-csv-archive
+        Fn::Sub: ${AWS::StackName}-csv
       BucketEncryption:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
@@ -134,7 +95,7 @@ Resources:
   CsvApi:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-proto-package/37a376b741004296dfda2ebf94083724
+      CodeUri: s3://peng-proto-package/a12faad4427dcc276a2056261d8733b7
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
@@ -166,21 +127,42 @@ Resources:
             Method: post
     Metadata:
       SamResourceId: CsvApi
-  PrivacyAccessPoint:
+  PrivacyCsvAccessPoint:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/d9d4ef56da5e00e8a334c6b3807b56e6.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/481cb3c8f6ee2e8f9b70000ca10bbc1b.template
       Parameters:
         S3BucketName:
           Ref: CsvBucket
     Metadata:
-      SamResourceId: PrivacyAccessPoint
+      SamResourceId: PrivacyCsvAccessPoint
+  PrivacyJpgAccessPoint:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/481cb3c8f6ee2e8f9b70000ca10bbc1b.template
+      Parameters:
+        S3BucketName:
+          Ref: JpgBucket
+    Metadata:
+      SamResourceId: PrivacyJpgAccessPoint
 Outputs:
-  HealthPhotoRestApiUrl:
-    Description: Severless REST api for health photos
+  NormalJpgRestApi:
+    Description: Severless normal REST api for jpg files
     Value:
-      Fn::Sub: https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/healthphotos/
-  PatientRestApiUrl:
-    Description: Severless REST api for patient data
+      Fn::Sub: https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/jpg-archive/
+  PrivacyConformJpgApi:
+    Description: Severless privacy conform api for jpg files
+    Value:
+      Fn::GetAtt:
+      - PrivacyJpgAccessPoint
+      - Outputs.PrivacyAccessApi
+  NormalCsvRestApi:
+    Description: Severless REST api for csv data
     Value:
       Fn::Sub: https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/csv-archive/
+  PrivacyConformCsvApi:
+    Description: Severless privacy conform api for csv files
+    Value:
+      Fn::GetAtt:
+      - PrivacyCsvAccessPoint
+      - Outputs.PrivacyAccessApi

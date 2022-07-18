@@ -15,7 +15,7 @@ Resources:
   PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/1bd5d4b16d0999223440c06df26e43ef
+      CodeUri: s3://peng-runtime/77d28b2b29c7a897e3159c185403e02f
       Runtime: nodejs16.x
       Handler: privacy-lambda.handler
       Policies:
@@ -53,6 +53,8 @@ Resources:
   GetS3ObjectApi:
     Type: AWS::Serverless::Api
     Properties:
+      Name:
+        Fn::Sub: ${S3BucketName}-anonAccess
       BinaryMediaTypes:
       - '*/*'
       StageName:
@@ -62,7 +64,7 @@ Resources:
   GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/1bd5d4b16d0999223440c06df26e43ef
+      CodeUri: s3://peng-runtime/77d28b2b29c7a897e3159c185403e02f
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:
@@ -80,12 +82,12 @@ Resources:
           Properties:
             RestApiId:
               Ref: GetS3ObjectApi
-            Path: /objects/{id}
+            Path: /anonymize-object/{id}
             Method: get
     Metadata:
       SamResourceId: GetS3ObjectLambda
 Outputs:
-  HelloWorldApi:
-    Description: API Gateway endpoint for testdata.csv
+  PrivacyAccessApi:
+    Description: Privacy Access Endpoint Url
     Value:
-      Fn::Sub: https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/objects/testdata.csv
+      Fn::Sub: https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/

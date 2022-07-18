@@ -3,7 +3,7 @@ const { S3 } = require("aws-sdk");
 const s3 = new S3();
 
 exports.handler = async (event, context) => {
-    console.log("Healthphotos-Event:\n", JSON.stringify(event, null, 2));
+    console.log("Photos-Event:\n", JSON.stringify(event, null, 2));
 
     const id = event.pathParameters?.id;
 

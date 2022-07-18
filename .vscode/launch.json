@@ -3,6 +3,51 @@
         {
             "type": "aws-sam",
             "request": "direct-invoke",
+            "name": "API backend:CsvApi",
+            "invokeTarget": {
+                "target": "api",
+                "templatePath": "${workspaceFolder}/backend/template.yaml",
+                "logicalId": "CsvApi"
+            },
+            "api": {
+                "path": "/",
+                "httpMethod": "get",
+                "payload": {
+                    "json": {}
+                }
+            }
+        },
+        {
+            "type": "aws-sam",
+            "request": "direct-invoke",
+            "name": "backend:CsvApi",
+            "invokeTarget": {
+                "target": "template",
+                "templatePath": "${workspaceFolder}/backend/template.yaml",
+                "logicalId": "CsvApi"
+            },
+            "lambda": {
+                "payload": {},
+                "environmentVariables": {}
+            }
+        },
+        {
+            "type": "aws-sam",
+            "request": "direct-invoke",
+            "name": "backend:CsvApi",
+            "invokeTarget": {
+                "target": "template",
+                "templatePath": "${workspaceFolder}/backend/template.yaml",
+                "logicalId": "CsvApi"
+            },
+            "lambda": {
+                "payload": {},
+                "environmentVariables": {}
+            }
+        },
+        {
+            "type": "aws-sam",
+            "request": "direct-invoke",
             "name": "Upload Book Cover (nodejs16.x)",
             "invokeTarget": {
                 "target": "template",
@@ -52,7 +97,7 @@
                 },
                 "environmentVariables": {},
                 "runtime": "nodejs16.x"
-            },
+            }
         },
         {
             "type": "aws-sam",
