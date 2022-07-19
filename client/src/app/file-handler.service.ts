@@ -10,13 +10,24 @@ export class FileHandlerService {
 
   constructor(private http: HttpClient ) { }
 
-  downloadFile(): Observable<any> {
-    const baseUrl = 'https://dmug9oijsb.execute-api.eu-central-1.amazonaws.com/Test/csv-archive/testdaten.csv';
+  downloadOrdinaryCsvFile(): Observable<any> {
+    const baseUrl = 'https://okomjjq1tk.execute-api.eu-central-1.amazonaws.com/Test/csv-archive/testdaten.csv';
     return this.http.get(baseUrl, {responseType: 'text'});
   }
 
-  downloadFileWithPurpose(purpose: string = "Statistics"): Observable<any> {
-    const baseUrl = 'https://6jt0zl69s3.execute-api.eu-central-1.amazonaws.com/test/objects/testdaten.csv?purposeToken=';
+  downloadCsvFileWithPurpose(purpose: string = "Statistics"): Observable<any> {
+    const baseUrl = 'https://nahqtqdnee.execute-api.eu-central-1.amazonaws.com/test/anonymize-object/testdaten.csv?purposeToken=';
     return this.http.get(baseUrl + purpose, {responseType: 'text'});
   }
+
+  downloadOrdinaryPhoto(): Observable<any> {
+    const baseUrl = 'https://okomjjq1tk.execute-api.eu-central-1.amazonaws.com/Test/csv-archive/testdaten.csv';
+    return this.http.get(baseUrl, {responseType: 'text'});
+  }
+
+  downloadPhotoWithPurpose(purpose: string = "Statistics"): Observable<any> {
+    const baseUrl = 'https://nahqtqdnee.execute-api.eu-central-1.amazonaws.com/test/anonymize-object/testdaten.csv?purposeToken=';
+    return this.http.get(baseUrl + purpose, {responseType: 'text'});
+  }
+
 }

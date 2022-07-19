@@ -95,10 +95,6 @@ function addNoiseToLocation (jpegFile) {
     const longitudeMultiplier = longitudeRef == 'E' ? 1 : -1;
     const decimalLongitude = longitudeMultiplier * piexif.GPSHelper.dmsRationalToDeg(longitude);
 
-    console.log(decimalLatitude);
-    console.log(decimalLongitude);
-
-
     //Earth’s radius, sphere
     R=6378137;
 

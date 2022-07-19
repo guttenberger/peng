@@ -10,8 +10,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class HomepageComponent implements OnInit {
   title: string = 'Test page for prototype';
-  selectedPurpose: any;
-  purposes = [{
+  selectedCsvPurpose: any;
+  csvPurposes = [{
     "id": 1,
     "name": "Statistics",
     "description": "Returns a CSV file containing the following fields: Postleitzahl, Testzentrum, Ergebnis"
@@ -22,12 +22,24 @@ export class HomepageComponent implements OnInit {
     "description": "Returns a CSV file containing the following fields: Nr., Anrede, Titel, Vorname, Nachname, Geburtsdatum, Strasse, Hausnummer, Postleitzahl, Stadt, Mobil, Email, Testzentrum, Ergebnis"
 }
 ];
+selectedPhotoPurpose: any;
+photoPurposes = [{
+  "id": 1,
+  "name": "Statistics",
+  "description": "tbd"
+},
+{
+  "id": 2,
+  "name": "MinistryOfHealth",
+  "description": "tbd"
+}
+];
 
   constructor(private _fileHandlerService: FileHandlerService) { }
 
   downloadFile(): void {
     const filename = 'testdaten.csv'
-    this._fileHandlerService.downloadFile().subscribe(
+    this._fileHandlerService.downloadOrdinaryCsvFile().subscribe(
         (response: any) =>{
             let dataType = response.type;
             let binaryData = [];
@@ -44,7 +56,7 @@ export class HomepageComponent implements OnInit {
 
   downloadFileThroughPurpose(purpose: string): void {
     const filename = 'testdaten.csv'
-    this._fileHandlerService.downloadFileWithPurpose(purpose).subscribe(
+    this._fileHandlerService.downloadCsvFileWithPurpose(purpose).subscribe(
         (response: any) =>{
             let dataType = response.type;
             let binaryData = [];
