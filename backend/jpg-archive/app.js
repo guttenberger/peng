@@ -65,6 +65,7 @@ async function getObject(event, context) {
         headers: {
             "Content-Type": ContentType,
             "Content-Length": ContentLength,
+            "Access-Control-Allow-Origin": "*"
         },
         body: Body.toString('base64'),
         isBase64Encoded: true
