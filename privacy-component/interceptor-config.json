@@ -1,13 +1,49 @@
 [
   {
+    "name": "TUCancerResearchInterceptor",
+    "auth": [
+      {
+        "type": "attribute",
+        "uniqueKey": "userIpAddress",
+        "config": {
+          "description": "Only allow access from the tu berlin network",
+          "userIpAddress": [
+            "130.149",
+            "141.23"
+          ]
+        }
+      },
+      {
+        "type": "purpose",
+        "uniqueKey": "purposeToken",
+        "config": {
+          "purpose": "TUCancerResearch",
+          "purposeToken": "TUCancerResearch",
+          "expirationDate": "01 August 2023 00:00 UTC",
+          "purposeOwnerId": "1235"
+        }
+      }
+    ],
+    "filters": [
+      {
+        "operation": "jpg-filter",
+        "config": {
+          "transformation": "addNoiseToLocation"
+        }
+      }
+    ]
+  },
+  {
     "name": "CancerResearchInterceptor",
     "auth": [
       {
         "type": "attribute",
         "uniqueKey": "userIpAddress",
         "config": {
+          "description": "Only allow access from the tu berlin network",
           "userIpAddress": [
-            ""
+            "130.149",
+            "141.23"
           ]
         }
       },
