@@ -6,25 +6,10 @@ const piexif = require('piexifjs');
 const getBase64DataFromJpegFile = file => file.toString('binary');
 const getExifFromJpegFile = file => piexif.load(getBase64DataFromJpegFile(file));
 
-// Get the Exif data for the palm tree photos
-// debugging to see photo data
-
-//clearMetaData(palmphoto);
-
-// Change the latitude to Area 51’s: 37° 14' 3.6" N
-const newLatitudeDecimal = 37.0 + (14 / 60) + (3.6 / 3600);
-const newLatitudeRef = 'N';
-// Change the longitude to Area 51’s: 115° 48' 23.99" W
-const newLongitudeDecimal = 115.0 + (48.0 / 60) + (23.99 / 3600);
-const newLongitudeRef = 'w';
-//changePhotoLocation(palmphoto, newLatitudeDecimal, newLatitudeRef, newLongitudeDecimal, newLongitudeRef);
-
-
-//addNoiseToLocation(palmphoto);
-
-// Given a Piexifjs object, this function displays its Exif tags
-// in a human-readable format
-// this is only for easier handling while programming
+/**
+ * Internal function for debugging photo metadata (also referred to as exif data) - displays all metadata on the console
+ * @param {*} exif the exif data from a photo
+ */
 function debugExif(exif) {
   for (const ifd in exif) {
     if (ifd == 'thumbnail') {
@@ -39,21 +24,29 @@ function debugExif(exif) {
   }
 }
 
+/**
+ * Scrubs all metadata from a given jpg file
+ * @param {*} jpegFile that is to be scrubbed of metadata
+ * @returns a fileBuffer containing the scrubbed jpg
+ */
 function clearMetaData(jpegFile) {
-  // Create a “scrubbed” copy of the original photo and save it
   const rawPhotoData = getBase64DataFromJpegFile(jpegFile);
-  const scrubbedRawPhoto = jpegFile + "_scrubbed.jpg";
   const scrubbedRawPhotoData = piexif.remove(rawPhotoData);
   fileBuffer = Buffer.from(scrubbedRawPhotoData, 'binary');
   return fileBuffer;
-  debugExif(getExifFromJpegFile(scrubbedRawPhoto));
-  // TODO: here the photo should not be saved but displayed as a download link(?) to the user
-  return scrubbedRawPhoto;
 }
 
+/**
+ * A helper function that changes a location in the metadata information of a jpg
+ * @param {*} jpegFile in which the photo location shall be changed
+ * @param {*} latitude the latitude to which the location is changed
+ * @param {*} latitudeRef the latitude reference to which the location is changed (N or S)
+ * @param {*} longitude the longitude to which the location is changed
+ * @param {*} longitudeRef the longitude reference to which the location is changed (W or E)
+ * @returns a buffer containing the jpg with changed photo location
+ */
 function changePhotoLocation(jpegFile, latitude, latitudeRef, longitude, longitudeRef) {
   const changedPhotoExif = getBase64DataFromJpegFile(jpegFile);
-  const changedRawPhoto = jpegFile + '_changed.jpg';
   const newExif = {
     '0th': { ...changedPhotoExif['0th'] },
     'Exif': { ...changedPhotoExif['Exif'] },
@@ -75,6 +68,11 @@ function changePhotoLocation(jpegFile, latitude, latitudeRef, longitude, longitu
   return Buffer.from(changedPhotoData, 'binary');
 }
 
+/**
+ * Adds noise to a photo location of a jpg by adding a random distance between 1km and 5km to latitude and longitude
+ * @param {*} jpegFile that the location is extracted from to add noise 
+ * @returns the result of the changePhotoLocation() function
+ */
 function addNoiseToLocation(jpegFile) {
   const photoExif = getExifFromJpegFile(jpegFile);
   const palmExifs = [photoExif];
@@ -111,12 +109,21 @@ function addNoiseToLocation(jpegFile) {
   }
 }
 
+/**
+ * an array of possible transformations that can be applied to a jpg
+ */
 const jpgTransformations = {
   "clearMetaData": jpg => clearMetaData(jpg),
   "addNoiseToLocation": jpg => addNoiseToLocation(jpg),
   // "changePhotoLocation": jpg => changePhotoLocation(jpg)
 }
 
+/**
+ * Defines which filter shall be applied to a given jpg
+ * @param {*} jpgFile the jpg file that is to be filtered
+ * @param {*} transformation the type of transformation from const jpgTransformations that is to be applied to the jpg
+ * @returns the transformed jpg according to the function that was called in const jpgTransformations
+ */
 function filter(jpgFile, { transformation }) {
   return jpgTransformations[transformation](jpgFile);
 }
