@@ -42,7 +42,6 @@ Resources:
     Metadata:
       SamResourceId: JpgBucket
   JpgApi:
-    DependsOn: JpgBucket
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://peng-proto-package/344c4a8a4997df0e538f259675949517
@@ -94,7 +93,6 @@ Resources:
     Metadata:
       SamResourceId: CsvBucket
   CsvApi:
-    DependsOn: CsvBucket
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://peng-proto-package/a12faad4427dcc276a2056261d8733b7
@@ -130,23 +128,25 @@ Resources:
     Metadata:
       SamResourceId: CsvApi
   PrivacyCsvAccessPoint:
-    DependsOn: CsvBucket
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/1e1f4e68faea950320c0c320322b3dca.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/5ad3dcb87f9177aa66e2467f2bb00604.template
       Parameters:
         S3BucketName:
           Ref: CsvBucket
+        Interceptors: '["CovidResearchCSVInterceptor", "StatisticsCSVInterceptor",
+          "MinistryOfHealthCSVInterceptor"]'
     Metadata:
       SamResourceId: PrivacyCsvAccessPoint
   PrivacyJpgAccessPoint:
-    DependsOn: JpgBucket
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/1e1f4e68faea950320c0c320322b3dca.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/5ad3dcb87f9177aa66e2467f2bb00604.template
       Parameters:
         S3BucketName:
           Ref: JpgBucket
+        Interceptors: '["TUCancerResearchJPGInterceptor", "ResearchJPGInterceptor",
+          "NoMetadataJPGInterceptor"]'
     Metadata:
       SamResourceId: PrivacyJpgAccessPoint
 Outputs:

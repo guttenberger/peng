@@ -1,6 +1,6 @@
 [
   {
-    "name": "TUCancerResearchInterceptor",
+    "name": "TUCancerResearchJPGInterceptor",
     "auth": [
       {
         "type": "attribute",
@@ -34,19 +34,8 @@
     ]
   },
   {
-    "name": "CancerResearchInterceptor",
+    "name": "ResearchJPGInterceptor",
     "auth": [
-      {
-        "type": "attribute",
-        "uniqueKey": "userIpAddress",
-        "config": {
-          "description": "Only allow access from the tu berlin network",
-          "userIpAddress": [
-            "130.149",
-            "141.23"
-          ]
-        }
-      },
       {
         "type": "purpose",
         "uniqueKey": "purposeToken",
@@ -68,7 +57,7 @@
     ]
   },
   {
-    "name": "NoMetadataInterceptor",
+    "name": "NoMetadataJPGInterceptor",
     "auth": [
       {
         "type": "purpose",
@@ -91,14 +80,14 @@
     ]
   },
   {
-    "name": "CovidResearchInterceptor",
+    "name": "CovidResearchCSVInterceptor",
     "auth": [
       {
         "type": "purpose",
         "uniqueKey": "purposeToken",
         "config": {
           "purpose": "CovidResearch",
-          "purposeToken": "Y9xxdhfKbh9zRHiv4w9ywmqdhAiVgGg6",
+          "purposeToken": "CovidResearch",
           "expirationDate": "01 August 2023 00:00 UTC",
           "purposeOwnerId": "1235"
         }
@@ -123,39 +112,7 @@
     ]
   },
   {
-    "name": "CancerResearchInterceptor",
-    "auth": [
-      {
-        "type": "purpose",
-        "uniqueKey": "purposeToken",
-        "config": {
-          "purpose": "CancerResearch",
-          "purposeToken": "Y9xxdhfKbh9zRHiv4w9ywmqdhAiVgGg6",
-          "expirationDate": "01 August 2023 00:00 UTC",
-          "purposeOwnerId": "1235"
-        }
-      }
-    ],
-    "filters": [
-      {
-        "type": "csv-filter",
-        "config": {
-          "fields": [
-            {
-              "Postleitzahl": "hide-last-two-characters"
-            },
-            {
-              "Geburtsdatum": "year-only"
-            },
-            "Testzentrum",
-            "Ergebnis"
-          ]
-        }
-      }
-    ]
-  },
-  {
-    "name": "StatisticsInterceptor",
+    "name": "StatisticsCSVInterceptor",
     "auth": [
       {
         "type": "purpose",
@@ -183,7 +140,7 @@
     ]
   },
   {
-    "name": "MinistryOfHealthInterceptor",
+    "name": "MinistryOfHealthCSVInterceptor",
     "auth": [
       {
         "type": "purpose",

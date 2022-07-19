@@ -45,7 +45,6 @@ Resources:
 
   # Serverless rest microservice for accessing jpg files from the s3 bucket
   JpgApi:
-    DependsOn: JpgBucket
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: jpg-archive/
@@ -94,7 +93,6 @@ Resources:
   
   # Serverless rest microservice for accessing jpg files from the s3 bucket
   CsvApi:
-    DependsOn: CsvBucket
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: csv-archive/
@@ -127,20 +125,21 @@ Resources:
   ### Privacy Access Points ###
 
   PrivacyCsvAccessPoint:
-    DependsOn: CsvBucket
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "../privacy-component/output-template.yaml"
       Parameters:
         S3BucketName: !Ref CsvBucket
+        Interceptors: '["CovidResearchCSVInterceptor", "StatisticsCSVInterceptor", "MinistryOfHealthCSVInterceptor"]'
 
   PrivacyJpgAccessPoint:
-    DependsOn: JpgBucket
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "../privacy-component/output-template.yaml"
       Parameters:
         S3BucketName: !Ref JpgBucket
+        Interceptors: '["TUCancerResearchJPGInterceptor", "ResearchJPGInterceptor", "NoMetadataJPGInterceptor"]'
+
 
 Outputs:
   NormalJpgRestApi:
