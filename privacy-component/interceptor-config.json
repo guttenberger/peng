@@ -1,0 +1,187 @@
+[
+  {
+    "name": "CancerResearchInterceptor",
+    "auth": [
+      {
+        "type": "attribute",
+        "uniqueKey": "userIpAddress",
+        "config": {
+          "userIpAddress": [
+            ""
+          ]
+        }
+      },
+      {
+        "type": "purpose",
+        "uniqueKey": "purposeToken",
+        "config": {
+          "purpose": "CancerResearch",
+          "purposeToken": "addNoiseToLocation",
+          "expirationDate": "01 August 2023 00:00 UTC",
+          "purposeOwnerId": "1235"
+        }
+      }
+    ],
+    "filters": [
+      {
+        "operation": "jpg-filter",
+        "config": {
+          "transformation": "addNoiseToLocation"
+        }
+      }
+    ]
+  },
+  {
+    "name": "NoMetadataInterceptor",
+    "auth": [
+      {
+        "type": "purpose",
+        "uniqueKey": "purposeToken",
+        "config": {
+          "purpose": "CancerResearch",
+          "purposeToken": "clearMetaData",
+          "expirationDate": "01 August 2023 00:00 UTC",
+          "purposeOwnerId": "1235"
+        }
+      }
+    ],
+    "filters": [
+      {
+        "operation": "jpg-filter",
+        "config": {
+          "transformation": "clearMetaData"
+        }
+      }
+    ]
+  },
+  {
+    "name": "CovidResearchInterceptor",
+    "auth": [
+      {
+        "type": "purpose",
+        "uniqueKey": "purposeToken",
+        "config": {
+          "purpose": "CovidResearch",
+          "purposeToken": "Y9xxdhfKbh9zRHiv4w9ywmqdhAiVgGg6",
+          "expirationDate": "01 August 2023 00:00 UTC",
+          "purposeOwnerId": "1235"
+        }
+      }
+    ],
+    "filters": [
+      {
+        "operation": "csv-filter",
+        "config": {
+          "fields": [
+            {
+              "Postleitzahl": "hide-last-two-characters"
+            },
+            {
+              "Geburtsdatum": "year-only"
+            },
+            "Testzentrum",
+            "Ergebnis"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "CancerResearchInterceptor",
+    "auth": [
+      {
+        "type": "purpose",
+        "uniqueKey": "purposeToken",
+        "config": {
+          "purpose": "CancerResearch",
+          "purposeToken": "Y9xxdhfKbh9zRHiv4w9ywmqdhAiVgGg6",
+          "expirationDate": "01 August 2023 00:00 UTC",
+          "purposeOwnerId": "1235"
+        }
+      }
+    ],
+    "filters": [
+      {
+        "operation": "csv-filter",
+        "config": {
+          "fields": [
+            {
+              "Postleitzahl": "hide-last-two-characters"
+            },
+            {
+              "Geburtsdatum": "year-only"
+            },
+            "Testzentrum",
+            "Ergebnis"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "StatisticsInterceptor",
+    "auth": [
+      {
+        "type": "purpose",
+        "uniqueKey": "purposeToken",
+        "config": {
+          "description": "Allow the general public one year read access for covid-19 statics",
+          "purposeToken": "Statistics",
+          "expirationDate": "01 August 2023 00:00 UTC",
+          "purposeOwnerId": "1235"
+        }
+      }
+    ],
+    "filters": [
+      {
+        "operation": "csv-filter",
+        "config": {
+          "fields": [
+            "Nr",
+            "Postleitzahl",
+            "Testzentrum",
+            "Ergebnis"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "MinistryOfHealthInterceptor",
+    "auth": [
+      {
+        "type": "purpose",
+        "uniqueKey": "purposeToken",
+        "config": {
+          "description": "Allow the ministry of health one year read access for covid-19 statics",
+          "purposeToken": "MinistryOfHealth",
+          "expirationDate": "01 August 2023 00:00 UTC",
+          "purposeOwnerId": "1235"
+        }
+      }
+    ],
+    "filters": [
+      {
+        "operation": "csv-filter",
+        "config": {
+          "fields": [
+            "Nr",
+            "Anrede",
+            "Titel",
+            "Vorname",
+            "Nachname",
+            "Geburtsdatum",
+            "Strasse",
+            "Hausnummer",
+            "Postleitzahl",
+            "Stadt",
+            "Mobil",
+            "EMail",
+            "Testzentrum",
+            "Ergebnis"
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -12,10 +12,26 @@ Globals:
     Timeout: 300
     MemorySize: 1024
 Resources:
+  JpgBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Ref: S3BucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+    Metadata:
+      SamResourceId: JpgBucket
   PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/77d28b2b29c7a897e3159c185403e02f
+      CodeUri: s3://peng-runtime/2403c40e7aae160a2b7b92da9e0f894a
       Runtime: nodejs16.x
       Handler: privacy-lambda.handler
       Policies:
@@ -26,7 +42,7 @@ Resources:
     Type: AWS::S3::AccessPoint
     Properties:
       Bucket:
-        Ref: S3BucketName
+        Ref: JpgBucket
       Name:
         Fn::Sub: ${S3BucketName}-support
     Metadata:
@@ -64,7 +80,7 @@ Resources:
   GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/77d28b2b29c7a897e3159c185403e02f
+      CodeUri: s3://peng-runtime/2403c40e7aae160a2b7b92da9e0f894a
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:

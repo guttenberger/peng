@@ -34,7 +34,7 @@ function anonymize(row, operations) {
   return row;
 }
 
-function filter(csvFile, fields = []) {
+function filter(csvFile, { fields = [] }) {
   const csvString = csvFile.toString('utf-8');
   const headers = [];
   const operations = {};

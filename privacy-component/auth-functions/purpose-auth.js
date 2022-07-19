@@ -1,10 +1,8 @@
-const purposeConfig = require("../purpose-config.json");
+function purposeAuthentication(awsEvent, userRequestContext, purposeConfig) {
+    const hasAllowedPurposeToken = purposeConfig.purposeToken === userRequestContext.purposeToken;
+    const hasAllowedPurpose = hasAllowedPurposeToken && Date.now() < new Date(purposeConfig.expirationDate);
 
-function purposeAuthentication(userRequestContext) {
-    const purpose = purposeConfig.find(el => el.purposeToken === userRequestContext.purposeToken);
-    const isAllowed = purpose && Date.now() < new Date(purpose.expirationDate);
-
-    return [isAllowed, purpose];
+    return hasAllowedPurpose;
 }
 
 module.exports = { purposeAuthentication }
