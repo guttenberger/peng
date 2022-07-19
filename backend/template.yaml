@@ -13,7 +13,7 @@ Globals:
       AllowHeaders: "'*'"
 
 Resources:
-  # Shared Api Gateway for csv and photo archive
+  # Shared Api Gateway for csv and jpg archive
   MyS3Api:
     Type: 'AWS::Serverless::Api'
     Properties:
@@ -122,35 +122,39 @@ Resources:
             Path: /csv-archive/
             Method: post
 
-  ### Privacy Access Points ###
+  ### Privacy Access Points - Examples ###
 
+  # Privacy Conform Access Point for the csv-archive bucket
   PrivacyCsvAccessPoint:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "../privacy-component/output-template.yaml"
       Parameters:
         S3BucketName: !Ref CsvBucket
+        # Interceptors from interceptor-config.json to include
         Interceptors: '["CovidResearchCSVInterceptor", "StatisticsCSVInterceptor", "MinistryOfHealthCSVInterceptor"]'
 
+  # Privacy Conform Access Point for the jpg-archive bucket
   PrivacyJpgAccessPoint:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "../privacy-component/output-template.yaml"
       Parameters:
         S3BucketName: !Ref JpgBucket
+        # Interceptors from interceptor-config.json to include
         Interceptors: '["TUCancerResearchJPGInterceptor", "ResearchJPGInterceptor", "NoMetadataJPGInterceptor"]'
 
 
 Outputs:
-  NormalJpgRestApi:
+  0NormalJpgRestApi:
     Description: "Severless normal REST api for jpg files"
     Value: !Sub  "https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/jpg-archive/"
-  PrivacyConformJpgApi:
+  0PrivacyConformJpgApi:
     Description: "Severless privacy conform api for jpg files"
     Value: !GetAtt PrivacyJpgAccessPoint.Outputs.PrivacyAccessApi
-  NormalCsvRestApi:
+  1NormalCsvRestApi:
     Description: "Severless REST api for csv data"
     Value: !Sub  "https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/csv-archive/"
-  PrivacyConformCsvApi:
+  1PrivacyConformCsvApi:
     Description: "Severless privacy conform api for csv files"
     Value: !GetAtt PrivacyCsvAccessPoint.Outputs.PrivacyAccessApi

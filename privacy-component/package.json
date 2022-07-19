@@ -3,13 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "config": {
+    "stack_name": "peng-test",
+    "packages_bucket": "peng-package",
+    "media_bucket": "peng-test-data"
+  },
   "scripts": {
+    "aws:bucket:init": "aws s3 mb s3://peng-test-data",
+    "aws:bucket:clean": "aws s3 rb s3://peng-test-data --force",
+    "aws:bucket:seed": "aws s3 cp ../backed/csv-archive/media s3://peng-test-data --recursive && aws s3 cp ../backed/jpg-archive/media s3://peng-test-data --recursive",
     "aws:init": "aws s3 mb s3://peng-package",
-    "aws:in": "aws s3 mb s3://peng-test-data",
-    "aws:rb": "aws s3 rb s3://peng-data",
-    "aws:clean": "aws s3 rm s3://peng-package --recursive && aws s3 rm s3://peng-test-data --recursive && sam delete --stack-name peng-test",
     "aws:package": "sam package --region eu-central-1 --s3-bucket peng-package --output-template-file output-template.yaml",
-    "aws:deploy": "sam deploy --stack-name peng-test --template-file output-template.yaml --capabilities CAPABILITY_IAM"
+    "aws:deploy": "sam deploy --stack-name peng-test --template-file output-template.yaml --capabilities CAPABILITY_IAM",
+    "aws:clean": "aws s3 rm s3://peng-package --recursive --recursive && sam delete --stack-name peng-test"
   },
   "keywords": [],
   "author": "",

@@ -12,12 +12,16 @@ def lambda_handler(event, context):
 
     s3 = boto3.client('s3')
     s3Bucket = os.environ['S3_ACCESS_POINT']
+    # userContext send to s3 object bucket
     userContext = {}
 
+    # write queryStringParameters to userContext
     if event['queryStringParameters'] is not None:
         userContext = event['queryStringParameters']
 
+    # write user ip address to userContext
     userContext['userIpAddress'] = event['requestContext']['identity']['sourceIp']
+    # write user arn (only for authenticated users) to userContext
     userContext['userArn'] = event['requestContext']['identity']['userArn']
 
     userContextJson = json.dumps(userContext)
@@ -25,8 +29,10 @@ def lambda_handler(event, context):
     if "#CONTEXTSTART#" in event['pathParameters']['id']:
         raise ValueError('S3 File is not allowed to have #CONTEXTSTART# in name')
 
+    # append userContext to s3Key
     s3Key = event['pathParameters']['id'] + '#CONTEXTSTART#' + userContextJson
     try:
+        # trigger s3 object lambda
         response = s3.get_object(Bucket=s3Bucket, Key=s3Key)
 
         return {

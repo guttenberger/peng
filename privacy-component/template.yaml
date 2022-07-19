@@ -1,24 +1,29 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
+# custom user defined parameters
 Parameters:
+ # deployment stage
   deploymentEnvironment:
     Type: String
     Default: "test"
+  # target s3 bucket where the privacy conform access should be added
   S3BucketName:
     Type: String
     Default: "peng-test-data"
+  # Interceptors from interceptor-config.json that should be included to the privacy interceptor
   Interceptors:
     Type: String
     Default: '["TUCancerResearchJPGInterceptor", "ResearchJPGInterceptor", "NoMetadataJPGInterceptor"]'
 
 Globals:
   Function:
-    Timeout: 300
+    Timeout: 200
     MemorySize: 1024
 
 Resources:
-  # PrivacyInterceptor
+  ### Privacy Interceptor
+  # Privacy Lambda
   PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
@@ -28,13 +33,14 @@ Resources:
       Policies:
         - AmazonS3FullAccess
 
-  # S3 Access Point (Network origin: Internet)
+  # S3 Support Access Point required by S3 Object Lambda
   SupportAccessPoint:
     Type: 'AWS::S3::AccessPoint'
     Properties:
       Bucket: !Ref S3BucketName
       Name: !Sub "${S3BucketName}-support"
 
+  # S3 Object Lambda access point
   PrivacyS3ObjectLambdaAccessPoint:
     Type: 'AWS::S3ObjectLambda::AccessPoint'
     Properties: 
@@ -49,8 +55,8 @@ Resources:
               FunctionArn: !GetAtt PrivacyLambda.Arn
               FunctionPayload: !Ref Interceptors
 
-
-  # Access S3 Object Lambda Microservice
+  ### Microservice to access object from S3 Object Lambda 
+  # Get api for accessing s3 object lambda
   GetS3ObjectApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -59,6 +65,7 @@ Resources:
         - '*/*'
       StageName: !Ref deploymentEnvironment
 
+  # Authorized Service for accessing s3 object lambda
   GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
@@ -83,3 +90,7 @@ Outputs:
   PrivacyAccessApi:
     Description: "Privacy Access Endpoint Url"
     Value: !Sub "https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/"
+
+  PrivacyAccessApiExample:
+    Description: "Privacy Access Endpoint Url"
+    Value: !Sub "https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/test.jpg?purposeToken=Reasearch"

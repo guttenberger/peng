@@ -33,13 +33,14 @@ function anonymize(row, operations) {
  * @param {*} fields an array of rows that are to be kept in the csv file
  * @returns a string buffer containing the filtered csv
  */
-function filter(csvFile, { fields = [] }) {
+function filter(csvFile, filterConfig) {
+  const { fields } = filterConfig;
   const csvString = csvFile.toString('utf-8');
   const headers = [];
   const operations = {};
 
   // check for data anonymization operations
-  for (const field of fields) {
+  for (const field of fields ?? []) {
     typeof field === "string"
       ? headers.push(field)
       : headers.push(Object.keys(field)[0]) && Object.assign(operations, field)
@@ -84,4 +85,6 @@ function filter(csvFile, { fields = [] }) {
   });
 }
 
+// filter functions must export a function that accepts the
+// s3object and the filter config defined in interceptor
 module.exports = { filter };

@@ -1,6 +1,7 @@
 const { purposeAuthentication } = require("./purpose-auth");
 const { attributeAuthentication } = require("./attribute-auth");
 
+// export auth functions, which are accessed by the auth type defined in interceptor-config.json
 module.exports = {
     "purpose": (awsEvent, userRequestContext, purposeConfig) =>
         purposeAuthentication(awsEvent, userRequestContext, purposeConfig),
