@@ -12,8 +12,11 @@ def lambda_handler(event, context):
 
     s3 = boto3.client('s3')
     s3Bucket = os.environ['S3_ACCESS_POINT']
+    userContext = {}
 
-    userContext = event['queryStringParameters']
+    if event['queryStringParameters'] is not None:
+        userContext = event['queryStringParameters']
+
     userContext['userIpAddress'] = event['requestContext']['identity']['sourceIp']
     userContext['userArn'] = event['requestContext']['identity']['userArn']
 

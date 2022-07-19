@@ -4,23 +4,12 @@
     "auth": [
       {
         "type": "attribute",
-        "uniqueKey": "userIpAddress",
+        "uniqueKey": "allowedIpAddresses",
         "config": {
           "description": "Only allow access from the tu berlin network",
-          "userIpAddress": [
-            "130.149",
-            "141.23"
+          "allowedIpAddresses": [
+            "83.135.76.9"
           ]
-        }
-      },
-      {
-        "type": "purpose",
-        "uniqueKey": "purposeToken",
-        "config": {
-          "purpose": "TUCancerResearch",
-          "purposeToken": "TUCancerResearch",
-          "expirationDate": "01 August 2023 00:00 UTC",
-          "purposeOwnerId": "1235"
         }
       }
     ],

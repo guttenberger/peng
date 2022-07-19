@@ -6,4 +6,5 @@ module.exports = {
         purposeAuthentication(awsEvent, userRequestContext, purposeConfig),
     "attribute": (awsEvent, userRequestContext, attributeConfig) =>
         attributeAuthentication(awsEvent, userRequestContext, attributeConfig),
+    "no": (awsEvent, userRequestContext, attributeConfig) => true
 }

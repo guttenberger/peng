@@ -18,7 +18,7 @@ Resources:
   PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-package/3d8635d9c704e65ffb095124fbb7b89d
+      CodeUri: s3://peng-package/9c8205926a65ccdb2ff235d3dd7b2775
       Runtime: nodejs16.x
       Handler: privacy-lambda.handler
       Policies:
@@ -69,7 +69,7 @@ Resources:
   GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-package/3d8635d9c704e65ffb095124fbb7b89d
+      CodeUri: s3://peng-package/9c8205926a65ccdb2ff235d3dd7b2775
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:

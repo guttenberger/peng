@@ -1,5 +1,5 @@
 function attributeAuthentication(awsEvent, userRequestContext, authConfig) {
-    return authConfig.userIpAddress
+    return authConfig.allowedIpAddresses
         .some(allowedIp => userRequestContext.userIpAddress.includes(allowedIp));
 }
 

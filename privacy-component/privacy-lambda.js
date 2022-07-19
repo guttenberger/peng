@@ -10,10 +10,23 @@ function getInterceptorConfig(interceptors, userContext) {
   const relevantInterceptors = interceptorConfigs
     .filter(interceptor => interceptors.includes(interceptor.name));
 
-  return relevantInterceptors.find(
+  // first try to find interceptor config by unique query param key
+  const interceptorConfigByQueryParams = relevantInterceptors.find(
     interceptor => interceptor.auth?.some(
       auth => auth.config[auth.uniqueKey] === userContext[auth.uniqueKey]
     ));
+
+  if (interceptorConfigByQueryParams)
+    return interceptorConfigByQueryParams;
+
+  // second try to find interceptor config by user ip
+  const interceptorConfigByIp = relevantInterceptors.find(
+    interceptor => interceptor.auth?.some(
+      auth => auth.config["allowedIpAddresses"]
+        .some(allowedIp => userContext.userIpAddress.includes(allowedIp))
+    ));
+
+  return interceptorConfigByIp;
 }
 
 async function denyAccess(outputRoute, outputToken) {
@@ -37,6 +50,9 @@ exports.handler = async (event, context) => {
   const interceptors = JSON.parse(event.configuration.payload);
   const userContext = JSON.parse(userContextString);
   const { auth, filters } = getInterceptorConfig(interceptors, userContext) ?? {};
+
+  console.log("Auth-Event:\n", JSON.stringify({ event, context }, null, 2));
+
 
   if (!auth)
     return denyAccess(outputRoute, outputToken);
