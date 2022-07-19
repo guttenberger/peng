@@ -23,15 +23,32 @@ def lambda_handler(event, context):
         raise ValueError('S3 File is not allowed to have #CONTEXTSTART# in name')
 
     s3Key = event['pathParameters']['id'] + '#CONTEXTSTART#' + userContextJson
-    response = s3.get_object(Bucket=s3Bucket, Key=s3Key)
+    try:
+        response = s3.get_object(Bucket=s3Bucket, Key=s3Key)
 
-    return {
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": response["ContentType"],
-            "Content-Length": response["ContentLength"],
-            "Access-Control-Allow-Origin": "*"
-        },
-        "body": base64.b64encode(response["Body"].read()).decode('utf-8'),
-        "isBase64Encoded": True
-    }
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": response["ContentType"],
+                "Content-Length": response["ContentLength"],
+                "Access-Control-Allow-Origin": "*"
+            },
+            "body": base64.b64encode(response["Body"].read()).decode('utf-8'),
+            "isBase64Encoded": True
+        }
+    
+    except Exception as e:
+        logger.info(f'GetObject-Exception: {e.response}')
+
+        exception_type = e.response['Error']['Code']
+        exception_message = e.response['Error']['Message']
+        exception_status_code = e.response['ResponseMetadata']['HTTPStatusCode']
+
+        return {
+            "statusCode": exception_status_code,
+            "body": json.dumps({
+                "type": exception_type,
+                "error": exception_message,
+                "requestId": event["requestContext"]["requestId"],
+            })
+        }

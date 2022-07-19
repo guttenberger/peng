@@ -1,3 +1,4 @@
+// @ts-checks
 const { S3 } = require("aws-sdk");
 
 const { transform, accessFilter } = require("./interceptor");
@@ -12,17 +13,29 @@ function getInterceptorConfig(userContext) {
     ));
 }
 
+async function denyAccess(outputRoute, outputToken) {
+  await s3.writeGetObjectResponse({
+    StatusCode: 403,
+    ErrorCode: 'NotAuthorized',
+    ErrorMessage: 'Not Authorized',
+    RequestRoute: outputRoute,
+    RequestToken: outputToken
+  }).promise();
+
+  return { statusCode: 200 };
+}
+
 exports.handler = async (event, context) => {
   // Output the event details to CloudWatch Logs.
   console.log("PrivacyLambda-Event:\n", JSON.stringify({ event, context }, null, 2));
 
-  const { getObjectContext } = event;
-  const { outputRoute, outputToken } = getObjectContext;
-
+  const { outputRoute, outputToken } = event.getObjectContext;
   const [route, userContextString] = decodeURIComponent(event.userRequest.url).split("#CONTEXTSTART#");
   const userContext = JSON.parse(userContextString);
+  const { auth, filters } = getInterceptorConfig(userContext) ?? {};
 
-  const { auth, filters } = getInterceptorConfig(userContext);
+  if (!auth)
+    return denyAccess(outputRoute, outputToken);
 
   let isAllowed = true;
 
@@ -31,17 +44,8 @@ exports.handler = async (event, context) => {
     isAllowed &&= isAuthorized;
   }
 
-  if (!isAllowed) {
-    await s3.writeGetObjectResponse({
-      StatusCode: 403,
-      ErrorCode: 'NotAuthorized',
-      ErrorMessage: 'Not Authorized',
-      RequestRoute: outputRoute,
-      RequestToken: outputToken
-    }).promise();
-
-    return { 'status_code': 403 }
-  }
+  if (!isAllowed)
+    return denyAccess(outputRoute, outputToken);
 
   const supporting_access_point_arn = event["configuration"]["supportingAccessPointArn"];
   const s3key = route.split(`${event.userRequest.headers.Host}/`).pop();
