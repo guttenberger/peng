@@ -4,7 +4,7 @@
   </h1>
 </div>
 <h2>Click below link to get CSV file directly from the Server:</h2>
-<button (click)="downloadFile()">Download CSV</button>
+<button (click)="downloadCsvFile()">Download CSV</button>
 <h2>Click below link to get CSV file using a specified purpose:</h2>
 <div>
   <h4>Please choose a purpose</h4>
@@ -18,10 +18,10 @@
 </ng-container>
 </div>
 <!-- TODO: Make button unclickable when no purpose is selected -->
-<button (click)="downloadFileThroughPurpose(selectedCsvPurpose.name)">Download CSV</button>
+<button (click)="downloadCsvFileThroughPurpose(selectedCsvPurpose.name)">Download CSV</button>
 
 <h2>Click below link to get a photo directly from the Server:</h2>
-<button (click)="downloadFile()">Download Photo</button>
+<button (click)="downloadPhoto()">Download Photo</button>
 <h2>Click below link to get a photo using a specified purpose:</h2>
 <div>
   <h4>Please choose a purpose</h4>
@@ -35,4 +35,4 @@
 </ng-container>
 </div>
 <!-- TODO: Make button unclickable when no purpose is selected -->
-<button (click)="downloadFileThroughPurpose(selectedPhotoPurpose.name)">Download Photo</button>
+<button (click)="downloadPhotoThroughPurpose(selectedPhotoPurpose.name)">Download Photo</button>
