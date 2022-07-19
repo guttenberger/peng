@@ -42,6 +42,7 @@ Resources:
     Metadata:
       SamResourceId: JpgBucket
   JpgApi:
+    DependsOn: JpgBucket
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://peng-proto-package/090e447a79e4485b581f578304b8e739
@@ -93,6 +94,7 @@ Resources:
     Metadata:
       SamResourceId: CsvBucket
   CsvApi:
+    DependsOn: CsvBucket
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://peng-proto-package/a12faad4427dcc276a2056261d8733b7
@@ -128,18 +130,20 @@ Resources:
     Metadata:
       SamResourceId: CsvApi
   PrivacyCsvAccessPoint:
+    DependsOn: CsvBucket
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/481cb3c8f6ee2e8f9b70000ca10bbc1b.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/50be42d0a9e4e342c4431522e053a232.template
       Parameters:
         S3BucketName:
           Ref: CsvBucket
     Metadata:
       SamResourceId: PrivacyCsvAccessPoint
   PrivacyJpgAccessPoint:
+    DependsOn: JpgBucket
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/481cb3c8f6ee2e8f9b70000ca10bbc1b.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/50be42d0a9e4e342c4431522e053a232.template
       Parameters:
         S3BucketName:
           Ref: JpgBucket
