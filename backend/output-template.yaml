@@ -45,7 +45,7 @@ Resources:
     DependsOn: JpgBucket
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-proto-package/090e447a79e4485b581f578304b8e739
+      CodeUri: s3://peng-proto-package/344c4a8a4997df0e538f259675949517
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
