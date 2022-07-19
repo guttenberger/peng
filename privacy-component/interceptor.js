@@ -1,34 +1,20 @@
 // @ts-check
-const csvFilter = require("./filter-functions/csv-filter");
-const jpgFilter = require("./filter-functions/metadata-filter");
-const { purposeAuthentication } = require("./auth-functions/purpose-auth");
-const { attributeAuthentication } = require("./auth-functions/attribute-auth");
-
-const authorizers = {
-    "purpose": (awsEvent, userRequestContext, purposeConfig) =>
-        purposeAuthentication(awsEvent, userRequestContext, purposeConfig),
-    "attribute": (awsEvent, userRequestContext, attributeConfig) =>
-        attributeAuthentication(awsEvent, userRequestContext, attributeConfig),
-}
+const authFunctions = require("./auth-functions/index.js");
+const filterFunctions = require("./filter-functions/index.js");
 
 const accessFilter = (awsEvent, userRequestContext, authType, authConfig) => {
-    console.log("Filter-Event:\n", JSON.stringify({ userRequestContext, awsEvent }, null, 2));
+    console.log("Filter-Event:\n", JSON.stringify({ authType, authConfig, userRequestContext, awsEvent }, null, 2));
 
-    return authorizers[authType](awsEvent, userRequestContext, authConfig);
-}
-
-const transformFilter = {
-    "csv-filter": (csvFile, config) => csvFilter.filter(csvFile, config),
-    "jpg-filter": (jpgFile, config) => jpgFilter.filter(jpgFile, config)
+    return authFunctions[authType](awsEvent, userRequestContext, authConfig);
 }
 
 async function transform(awsEvent, filter, userRequestContext, s3object) {
-    console.log("Transform-Event:\n", JSON.stringify({ event: awsEvent, userRequestContext, s3object }, null, 2));
+    console.log("Transform-Event:\n", JSON.stringify({ event: awsEvent, userRequestContext, s3object, filter }, null, 2));
 
-    const { operation, config } = filter;
+    const { type, config } = filter ?? {};
 
-    if (operation)
-        return await transformFilter[operation](s3object, config);
+    if (type)
+        return await filterFunctions[type](s3object, config);
 
     return s3object;
 }

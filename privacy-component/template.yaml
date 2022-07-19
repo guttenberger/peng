@@ -7,7 +7,7 @@ Parameters:
     Default: "test"
   S3BucketName:
     Type: String
-    Default: "peng-data"
+    Default: "peng-test-data"
 
 Globals:
   Function:

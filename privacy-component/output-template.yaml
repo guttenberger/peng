@@ -6,7 +6,7 @@ Parameters:
     Default: test
   S3BucketName:
     Type: String
-    Default: peng-data
+    Default: peng-test-data
 Globals:
   Function:
     Timeout: 300
@@ -15,7 +15,7 @@ Resources:
   PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/9ffd8791bf454de1af28100a04bb6dac
+      CodeUri: s3://peng-package/3e8cc7f94382d9529ad3a0f1d1f66321
       Runtime: nodejs16.x
       Handler: privacy-lambda.handler
       Policies:
@@ -64,7 +64,7 @@ Resources:
   GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-runtime/9ffd8791bf454de1af28100a04bb6dac
+      CodeUri: s3://peng-package/3e8cc7f94382d9529ad3a0f1d1f66321
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:

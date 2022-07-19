@@ -133,7 +133,7 @@ Resources:
     DependsOn: CsvBucket
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/50be42d0a9e4e342c4431522e053a232.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/1e1f4e68faea950320c0c320322b3dca.template
       Parameters:
         S3BucketName:
           Ref: CsvBucket
@@ -143,7 +143,7 @@ Resources:
     DependsOn: JpgBucket
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/50be42d0a9e4e342c4431522e053a232.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/1e1f4e68faea950320c0c320322b3dca.template
       Parameters:
         S3BucketName:
           Ref: JpgBucket

@@ -26,7 +26,7 @@
     ],
     "filters": [
       {
-        "operation": "jpg-filter",
+        "type": "jpg-filter",
         "config": {
           "transformation": "addNoiseToLocation"
         }
@@ -60,7 +60,7 @@
     ],
     "filters": [
       {
-        "operation": "jpg-filter",
+        "type": "jpg-filter",
         "config": {
           "transformation": "addNoiseToLocation"
         }
@@ -83,7 +83,7 @@
     ],
     "filters": [
       {
-        "operation": "jpg-filter",
+        "type": "jpg-filter",
         "config": {
           "transformation": "clearMetaData"
         }
@@ -106,7 +106,7 @@
     ],
     "filters": [
       {
-        "operation": "csv-filter",
+        "type": "csv-filter",
         "config": {
           "fields": [
             {
@@ -138,7 +138,7 @@
     ],
     "filters": [
       {
-        "operation": "csv-filter",
+        "type": "csv-filter",
         "config": {
           "fields": [
             {
@@ -170,7 +170,7 @@
     ],
     "filters": [
       {
-        "operation": "csv-filter",
+        "type": "csv-filter",
         "config": {
           "fields": [
             "Nr",
@@ -198,7 +198,7 @@
     ],
     "filters": [
       {
-        "operation": "csv-filter",
+        "type": "csv-filter",
         "config": {
           "fields": [
             "Nr",
