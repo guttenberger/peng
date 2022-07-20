@@ -71,7 +71,7 @@ To use it declare "attribute" as auth type and provide following auth configurat
 | allowedIpAddresses | *required*, List of allowedIpAddresses |
 
 #### Predefined filter functions
-We provide 2 [auth functions](./privacy-component/filter-functions/index.js):
+We provide 2 [filter functions](./privacy-component/filter-functions/index.js):
 
 1. Jpg-filter
 Perform jpg operation on the s3 object. to use it set "jpg-filter" as filter type and declare a config object with:
@@ -108,7 +108,7 @@ The key the functions in the export module object will be used as auth type in t
 
 ### Adding custom filter (transformation) functions
 In order to add a new custom filter functions
-1. add a new file with a auth function to the ./privacy-component/filter-function folder 
+1. add a new file with a filter function to the ./privacy-component/filter-function folder 
 
 The function must accept 3 arguments and return an boolean. The 3 arguments are:
 

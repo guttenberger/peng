@@ -35,7 +35,12 @@ export class HomepageComponent implements OnInit {
   {
     "id": 2,
     "name": "Research",
-    "description": "Returns a photo that still has all metadata attached, where the location has been noised with a random number between 2km and 5km."
+    "description": "Returns a photo that still has all metadata attached, where the location has been noised with a random number between 1km and 5km."
+  },
+  {
+    "id": 3,
+    "name": "TUOnlyCancerResearch",
+    "description": "Returns a photo that still has all metadata attached, where the location has been noised with a random number between 1km and 5km. Only accessible while in the TU network."
   }
   ];
 
