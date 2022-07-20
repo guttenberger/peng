@@ -12,13 +12,13 @@ Parameters:
     Default: '["TUCancerResearchJPGInterceptor", "ResearchJPGInterceptor", "NoMetadataJPGInterceptor"]'
 Globals:
   Function:
-    Timeout: 300
+    Timeout: 200
     MemorySize: 1024
 Resources:
   PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-package/9c8205926a65ccdb2ff235d3dd7b2775
+      CodeUri: s3://peng-package/a746022583342deba1c85d3270b61750
       Runtime: nodejs16.x
       Handler: privacy-lambda.handler
       Policies:
@@ -69,7 +69,7 @@ Resources:
   GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-package/9c8205926a65ccdb2ff235d3dd7b2775
+      CodeUri: s3://peng-package/a746022583342deba1c85d3270b61750
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:
@@ -96,3 +96,7 @@ Outputs:
     Description: Privacy Access Endpoint Url
     Value:
       Fn::Sub: https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/
+  PrivacyAccessApiExample:
+    Description: Privacy Access Endpoint Url
+    Value:
+      Fn::Sub: https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/test.jpg?purposeToken=Reasearch

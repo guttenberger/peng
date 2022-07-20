@@ -44,7 +44,7 @@ Resources:
   JpgApi:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-proto-package/344c4a8a4997df0e538f259675949517
+      CodeUri: s3://peng-proto-package/39bbe8652b55b9c7ecad757d160eed70
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
@@ -95,7 +95,7 @@ Resources:
   CsvApi:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-proto-package/a12faad4427dcc276a2056261d8733b7
+      CodeUri: s3://peng-proto-package/79647473cd78436f897c76fbd1053af6
       Handler: app.handler
       Runtime: nodejs16.x
       Environment:
@@ -130,7 +130,7 @@ Resources:
   PrivacyCsvAccessPoint:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/5ad3dcb87f9177aa66e2467f2bb00604.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/8db312e9b0bebb713052522861edb2b6.template
       Parameters:
         S3BucketName:
           Ref: CsvBucket
@@ -141,7 +141,7 @@ Resources:
   PrivacyJpgAccessPoint:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/5ad3dcb87f9177aa66e2467f2bb00604.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/8db312e9b0bebb713052522861edb2b6.template
       Parameters:
         S3BucketName:
           Ref: JpgBucket
@@ -150,21 +150,21 @@ Resources:
     Metadata:
       SamResourceId: PrivacyJpgAccessPoint
 Outputs:
-  NormalJpgRestApi:
+  '0NormalJpgRestApi':
     Description: Severless normal REST api for jpg files
     Value:
       Fn::Sub: https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/jpg-archive/
-  PrivacyConformJpgApi:
+  '0PrivacyConformJpgApi':
     Description: Severless privacy conform api for jpg files
     Value:
       Fn::GetAtt:
       - PrivacyJpgAccessPoint
       - Outputs.PrivacyAccessApi
-  NormalCsvRestApi:
+  1NormalCsvRestApi:
     Description: Severless REST api for csv data
     Value:
       Fn::Sub: https://${MyS3Api}.execute-api.${AWS::Region}.amazonaws.com/Test/csv-archive/
-  PrivacyConformCsvApi:
+  1PrivacyConformCsvApi:
     Description: Severless privacy conform api for csv files
     Value:
       Fn::GetAtt:
