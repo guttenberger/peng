@@ -93,4 +93,4 @@ Outputs:
 
   PrivacyAccessApiExample:
     Description: "Privacy Access Endpoint Url"
-    Value: !Sub "https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/test.jpg?purposeToken=Reasearch"
+    Value: !Sub "https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/test.jpg?purposeToken=Research"
