@@ -8,9 +8,6 @@ In addition:
 - [aws cli](https://docs.aws.amazon.com/de_de/cli/latest/userguide/getting-started-install.html)
 - [NodeJs 16.10 or higher](https://nodejs.org/en/)
 
-## How to get started with the prototype
-
-    
 ## How to use the privacy component
 ![Privacy component architecture](./diagrams/template.svg)
 
