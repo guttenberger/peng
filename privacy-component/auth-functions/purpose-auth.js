@@ -1,11 +1,11 @@
-function purposeAuthentication(awsEvent, userRequestContext, purposeConfig) {
+function purposeAuthentication(awsEvent, userRequestContext, authConfig) {
     // check for valid purpose token
-    const hasAllowedPurposeToken = purposeConfig.purposeToken === userRequestContext.purposeToken;
+    const hasAllowedPurposeToken = authConfig.purposeToken === userRequestContext.purposeToken;
 
     // check for valid date
-    const hasAllowedPurposeDate = Date.now() < new Date(purposeConfig.expirationDate);
+    const hasAllowedPurposeDate = Date.now() < new Date(authConfig.expirationDate);
 
-    return hasAllowedPurpose && hasAllowedPurposeDate;
+    return hasAllowedPurposeToken && hasAllowedPurposeDate;
 }
 
 module.exports = { purposeAuthentication }

@@ -16,7 +16,7 @@ async function transform(awsEvent, filter = {}, userRequestContext, s3object) {
 
     // get and and run filter functions based on filter type defined in the interceptor config
     if (type)
-        return await filterFunctions[type](s3object, config);
+        return await filterFunctions[type](s3object, config, userRequestContext);
 
     // return original object if no filter was defined
     return s3object;

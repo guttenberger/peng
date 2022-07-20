@@ -33,7 +33,7 @@ function anonymize(row, operations) {
  * @param {*} fields an array of rows that are to be kept in the csv file
  * @returns a string buffer containing the filtered csv
  */
-function filter(csvFile, filterConfig) {
+function filter(csvFile, filterConfig, userContext) {
   const { fields } = filterConfig;
   const csvString = csvFile.toString('utf-8');
   const headers = [];

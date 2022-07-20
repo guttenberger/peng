@@ -86,7 +86,7 @@ exports.handler = async (event, context) => {
 
   // transform s3 object based on interceptor authentication
   let modifiedObject;
-  for (const filter of filters)
+  for (const filter of filters ?? [])
     modifiedObject = await transform(event, filter, userContext, modifiedObject ?? Body);
 
   // return modified object

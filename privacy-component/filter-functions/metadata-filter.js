@@ -121,11 +121,12 @@ const jpgTransformations = {
 /**
  * Defines which filter shall be applied to a given jpg
  * @param {*} jpgFile the jpg file that is to be filtered
- * @param {*} transformation the type of transformation from const jpgTransformations that is to be applied to the jpg
+ * @param {*} filterConfig the type of transformation from const jpgTransformations that is to be applied to the jpg
+ * @param {*} userContext user context information
  * @returns the transformed jpg according to the function that was called in const jpgTransformations
  */
-function filter(jpgFile, { transformation }) {
-  return jpgTransformations[transformation](jpgFile);
+function filter(jpgFile, filterConfig, userContext) {
+  return jpgTransformations[filterConfig.transformation](jpgFile);
 }
 
 module.exports = {
