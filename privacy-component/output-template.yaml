@@ -18,7 +18,7 @@ Resources:
   PrivacyLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-package/a746022583342deba1c85d3270b61750
+      CodeUri: s3://peng-package/3de878b34d96a9fb88762def1b64fe43
       Runtime: nodejs16.x
       Handler: privacy-lambda.handler
       Policies:
@@ -69,7 +69,7 @@ Resources:
   GetS3ObjectLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://peng-package/a746022583342deba1c85d3270b61750
+      CodeUri: s3://peng-package/3de878b34d96a9fb88762def1b64fe43
       Runtime: python3.8
       Handler: get-object.lambda_handler
       Environment:
@@ -99,4 +99,4 @@ Outputs:
   PrivacyAccessApiExample:
     Description: Privacy Access Endpoint Url
     Value:
-      Fn::Sub: https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/test.jpg?purposeToken=Reasearch
+      Fn::Sub: https://${GetS3ObjectApi}.execute-api.${AWS::Region}.amazonaws.com/${deploymentEnvironment}/anonymize-object/test.jpg?purposeToken=Research

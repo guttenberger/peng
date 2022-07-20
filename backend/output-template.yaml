@@ -130,7 +130,7 @@ Resources:
   PrivacyCsvAccessPoint:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/8db312e9b0bebb713052522861edb2b6.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/65f19d666ed0d5a0146d60ae8e995dbb.template
       Parameters:
         S3BucketName:
           Ref: CsvBucket
@@ -141,7 +141,7 @@ Resources:
   PrivacyJpgAccessPoint:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/8db312e9b0bebb713052522861edb2b6.template
+      TemplateURL: https://s3.eu-central-1.amazonaws.com/peng-proto-package/65f19d666ed0d5a0146d60ae8e995dbb.template
       Parameters:
         S3BucketName:
           Ref: JpgBucket
